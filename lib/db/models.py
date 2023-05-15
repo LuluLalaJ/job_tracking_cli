@@ -46,7 +46,7 @@ class User(Base):
     jobs = association_proxy('applications', 'job', creator=lambda job: Application(job=job))
 
     def __repr__(self):
-        return f'<User: {self.first_name} {self.last_name}>'
+        return f'<User: {self.first_name} {self.last_name} | user_id: {self.user_id}>'
 
 class Application(Base):
     __tablename__ = "applications"

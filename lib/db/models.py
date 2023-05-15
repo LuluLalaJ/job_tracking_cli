@@ -26,6 +26,10 @@ class Job(Base):
     salary_in_usd = Column(Integer())
     remote = Column(Boolean())
 
+    #still trying to understand back-populate & association_proxy
+    applications = relationship('Application', back_populates="job")
+    users = association_proxy('applications', 'user', creator=lambda user: Application(user=user))
+
     def __repr__(self):
         #edit the repr later if necessary
         return f'<Job: {self.job_title}; Company: {self.company}; Location: {self.location}; Salary: ${self.salary_in_usd}>'
@@ -36,6 +40,10 @@ class User(Base):
     user_id = Column(Integer(), primary_key=True)
     first_name = Column(String())
     last_name = Column(String())
+
+    #still trying to understand back-populate & association_proxy
+    applications = relationship('Application', back_populates="user")
+    jobs = association_proxy('applications', 'job', creator=lambda job: Application(job=job))
 
     def __repr__(self):
         return f'<User: {self.first_name} {self.last_name}>'
@@ -53,6 +61,11 @@ class Application(Base):
 
     job_id = Column(String(), ForeignKey("jobs.job_id"))
     user_id = Column(String(), ForeignKey("users.user_id"))
+
+    #create relationships
+    #Many-to-Many with an Association Object
+    job = relationship('Job', back_populates='applications')
+    user = relationship('User', back_populates='applications')
 
     def __repr__(self):
         return f'<Application: ; Status: {self.status}>'

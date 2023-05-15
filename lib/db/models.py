@@ -11,7 +11,7 @@ convention = {
 metadata = MetaData(naming_convention=convention)
 Base = declarative_base(metadata=metadata)
 
-#do I still need this here?
+#do I need this here???
 engine = create_engine('sqlite:///jobtracking.db')
 
 #This is just a practice
@@ -54,6 +54,8 @@ class Application(Base):
     application_id = Column(Integer(), primary_key=True)
     #https://learning.flatironschool.com/courses/6329/assignments/239678?module_item_id=563727
     #with dynamic default values like func.now(), one has to clear the data in the database before running new migration
+
+    #maybe need to change this for testing? since seeding creates the same time stamps!
     created_at = Column(DateTime(), server_default=func.now())
     updated_at = Column(DateTime(), onupdate=func.now())
     status = Column(String())
@@ -68,4 +70,4 @@ class Application(Base):
     user = relationship('User', back_populates='applications')
 
     def __repr__(self):
-        return f'<Application: ; Status: {self.status}>'
+        return f'<Application: {self.job.job_title}; Status: {self.status}>'

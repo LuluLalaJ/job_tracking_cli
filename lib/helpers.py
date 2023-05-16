@@ -94,11 +94,47 @@ def menu_choice():
         print('The entered value is not valid!')
         return None
 
+def filter_choice():
+    print('Please choose a filter: A, B, C, D, E, or F')
+    filter_choice = input().lower()
+    if filter_choice in ["a", "b", "c", "d", "e", "f"]:
+        return filter_choice
+    else:
+        print('The entered value is not valid!')
+        return None
+
+def process_filter(filter):
+    if filter == "a":
+        pass
+    if filter == "b":
+        pass
+    if filter == "c":
+        pass
+    if filter == "d":
+        pass
+    if filter == "e":
+        pass
+    if filter == "f":
+        pass
+
 def process_choice(session, choice, user):
     if choice == "a":
         pass
     if choice == "b":
-        pass
+        while True:
+            menu = f'How would you like to filter? \n' \
+                + f'A. by job title \n' \
+                + f'B. by company \n' \
+                + f'C. by location \n' \
+                + f'D. by salary \n' \
+                + f'E. by remote \n' \
+                + f'F. by application status'
+            print(menu)
+            filter = filter_choice()
+            if filter:
+                filtering_by = process_filter(session, filter)
+                filter = filtering_by
+
     if choice == "c":
         app_id = check_app_id(user)
         update_application_status(session, app_id)

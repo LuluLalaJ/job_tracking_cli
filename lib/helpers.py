@@ -94,6 +94,34 @@ def menu_choice():
         print('The entered value is not valid!')
         return None
 
+def process_choice(session, choice, user):
+    if choice == "a":
+        pass
+    if choice == "b":
+        handle_filter_applications(session)
+    if choice == "c":
+        app_id = check_app_id(user)
+        update_application_status(session, app_id)
+        show_user_applications(user)
+        return
+    if choice == "d":
+        handle_remove_application(session, user)
+
+def handle_filter_applications(session):
+    while True:
+        menu = f'How would you like to filter? \n' \
+            + f'A. by job title \n' \
+            + f'B. by company \n' \
+            + f'C. by location \n' \
+            + f'D. by salary \n' \
+            + f'E. by remote \n' \
+            + f'F. by application status'
+        print(menu)
+        filter = filter_choice()
+        if filter:
+            filtering_by = process_filter(session, filter)
+            filter = filtering_by
+
 def filter_choice():
     print('Please choose a filter: A, B, C, D, E, or F')
     filter_choice = input().lower()
@@ -117,46 +145,22 @@ def process_filter(filter):
     if filter == "f":
         pass
 
-def process_choice(session, choice, user):
-    if choice == "a":
-        pass
-    if choice == "b":
-        while True:
-            menu = f'How would you like to filter? \n' \
-                + f'A. by job title \n' \
-                + f'B. by company \n' \
-                + f'C. by location \n' \
-                + f'D. by salary \n' \
-                + f'E. by remote \n' \
-                + f'F. by application status'
-            print(menu)
-            filter = filter_choice()
-            if filter:
-                filtering_by = process_filter(session, filter)
-                filter = filtering_by
-
-    if choice == "c":
-        app_id = check_app_id(user)
-        update_application_status(session, app_id)
-        show_user_applications(user)
-        return
-
-    if choice == "d":
-        while True:
-            print("Please enter the id of the application that you wish to delete:")
-            application_id = input()
-            try:
-                application_id = int(application_id)
-                app_id_exists = application_id in user_active_app_id(user)
-                if app_id_exists:
-                    deactivate_application(session, application_id)
-                    show_user_applications(user)
-                    break
-                else:
-                    print("Error: Application ID must be valid ID number.")
-                    continue
-            except ValueError:
-                print("Error: ID must be an integer.")
+def handle_remove_application(session, user):
+    while True:
+        print("Please enter the id of the application that you wish to delete:")
+        application_id = input()
+        try:
+            application_id = int(application_id)
+            app_id_exists = application_id in user_active_app_id(user)
+            if app_id_exists:
+                deactivate_application(session, application_id)
+                show_user_applications(user)
+                break
+            else:
+                print("Error: Application ID must be valid ID number.")
+                continue
+        except ValueError:
+            print("Error: ID must be an integer.")
 
 def deactivate_application(session, app_id):
     app = session.query(Application).filter(Application.application_id == app_id)

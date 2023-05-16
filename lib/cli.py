@@ -31,26 +31,11 @@ if __name__ == '__main__':
         menu = f'You can: \n' \
               + f'A. add a new job application \n' \
               + f'B. filter my job applications \n' \
-              + f'C. update an existing job application \n' \
+              + f'C. update an existing job application status \n' \
               + f'D. delete an existing job application \n' \
               + f'E. exist the program'
         print(menu)
         choice = menu_choice()
         if choice:
-            interacting_with_db = False
-
-    process_choice(choice)
-
-    # user1 = session.query(User).filter(User.user_id == 1).first()
-    # print(user1)
-    # application1 = session.query(Application).filter(Application.application_id == 1).first()
-    # job1 = session.query(Job).filter(Job.job_id == 1).first()
-
-    # print(application1.job)
-    # print(application1.user)
-    # print(job1)
-    # print(job1.applications)
-
-    # print(session.query(Job).all())
-    # print(session.query(User).all())
-    # print(session.query(Application).all())
+            done_processing = process_choice(session, choice, validated_user)
+            choice = done_processing

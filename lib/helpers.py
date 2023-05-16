@@ -1,6 +1,16 @@
 from db.models import Job, User, Application
 from prettytable import PrettyTable
 
+APPLICATION_STATUS = [
+    "to be submitted",
+    "submitted",
+    "pending",
+    "under review",
+    "interview scheduled",
+    "approved",
+    "denied"
+    ]
+
 def validate_user(session):
     #how can I enable quit to exist anytime??
     new_user = input()
@@ -52,16 +62,15 @@ def add_new_user(session, first_name, last_name):
     else:
         return None
 
-
 def show_user_applications(user):
     x = PrettyTable()
-    x.field_names = ["job title", "company", "location", "salary($)", "remote", "application status"]
+    x.field_names = ["application id", "job title", "company", "location", "salary($)", "remote", "application status"]
     if isinstance(user, User):
         rows = []
         for app in user.applications:
             if app.active:
                 job = app.job
-                app_record = [job.job_title, job.company, job.location, job.salary_in_usd, job.remote, app.status]
+                app_record = [app.application_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote, app.status]
                 rows.append(app_record)
         x.add_rows(rows)
         if rows:
@@ -83,5 +92,65 @@ def menu_choice():
         print('The entered value is not valid!')
         return None
 
-def process_choice():
-    pass
+def all_active_app_ids(user):
+    applications = user.applications
+    return [app.application_id for app in applications]
+
+def process_choice(session, choice, user):
+    if choice == "a":
+        pass
+    if choice == "b":
+        pass
+    if choice == "c":
+        print("Please enter the id of the application that you wish to update")
+        application_id = input()
+        #same issue, is there a way not to go back all the way to interacting_with_db
+        #if app id is not valid but to enter allow users to enter the application id again?
+        if int(application_id) not in all_active_app_ids(user):
+            print('The application id is not valid')
+            return None
+        update_application_status(session, int(application_id))
+        show_user_applications(user)
+        return None 
+
+    if choice == "d":
+        print("Please enter the id of the application that you wish to delete:")
+        application_id = input()
+        #same as the comment on choice c validating application_id
+        deactivate_application(session, int(application_id))
+        show_user_applications(user)
+        return None
+
+def deactivate_application(session, app_id):
+    app = session.query(Application).filter(Application.application_id == app_id)
+    app.update({
+        'active': False
+    })
+    session.commit()
+    print('The application is deleted!')
+
+#is there a way to add go back to the previous menu??
+def update_application_status(session, app_id):
+    print('Please select the new applicaiton status:')
+    i = 1
+    for status in APPLICATION_STATUS:
+        print(f'{i}. {status.capitalize()}')
+        i += 1
+    print(f'{i}. exist the program')
+
+    choice = input()
+    #need to think about the type of choice before the following?
+
+    if int(choice) == i or choice.lower() == 'quit':
+        quit()
+    if int(choice) in range(1, i):
+        app = session.query(Application).filter(Application.application_id == app_id)
+        app.update({
+            'status': APPLICATION_STATUS[int(choice)-1]
+        })
+        session.commit()
+        print('The application status is updated!')
+    else:
+        #maybe need to let the user to choose again
+        print ("Invalid choice!")
+        return None

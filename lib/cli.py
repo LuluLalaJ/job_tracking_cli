@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-from prettytable import PrettyTable
+# from prettytable import PrettyTable
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 #looking into different way of importing
-from db.models import Job, User, Application
+# from db.models import Job, User, Application
 from helpers import (validate_user, show_user_applications,
                      menu_choice, process_choice)
 
@@ -16,18 +16,12 @@ if __name__ == '__main__':
     session = Session()
 
     print('Welcome to job application tracker!')
-    validating_user = True
-    while validating_user:
-        print('Are you a new user? y/n; enter "quit" to exit')
-        validated_user = validate_user(session)
-        if validated_user:
-            print(validated_user)
-            validating_user = False
 
+    validated_user = validate_user(session)
+    print(validated_user)
     show_user_applications(validated_user)
 
-    interacting_with_db = True
-    while interacting_with_db:
+    while True:
         menu = f'You can: \n' \
               + f'A. add a new job application \n' \
               + f'B. filter my job applications \n' \

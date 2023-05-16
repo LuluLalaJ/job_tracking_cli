@@ -12,31 +12,33 @@ APPLICATION_STATUS = [
     ]
 
 def validate_user(session):
-    #how can I enable quit to exist anytime??
-    new_user = input()
-    if (new_user.lower() == 'y'):
-        print("Let's add you to the database!")
-        first_name, last_name = enter_name()
-        new_user = add_new_user(session, first_name, last_name)
-        print("You're in the system! Here is your info:")
-        return new_user
-    elif (new_user.lower() == ('n')):
-        print("Let's find you in the database!")
-        first_name, last_name = enter_name()
-        print("What's your user id")
-        id = input()
-        existing_user = find_user_by_id(session, id)
-        if existing_user and existing_user.first_name == first_name and existing_user.last_name == last_name:
-            print('Welcome back!')
-            return existing_user
+    while True:
+        new_user = input('Are you a new user? y/n; (Type "quit" to exit) \n')
+        if (new_user.lower() == 'y'):
+            print("Let's add you to the database!")
+            first_name, last_name = enter_name()
+            new_user = add_new_user(session, first_name, last_name)
+            print("You're in the system! Here is your info:")
+            return new_user
+        elif (new_user.lower() == ('n')):
+            print("Let's find you in the database!")
+            first_name, last_name = enter_name()
+            id = input("What's your user id? \n")
+            existing_user = find_user_by_id(session, id)
+            if existing_user and existing_user.first_name == first_name and existing_user.last_name == last_name:
+                print('Welcome back!')
+                return existing_user
+            else:
+                print("Ummm, I can't seem to find you!")
+        elif new_user.lower() == "admin":
+            run_admin()
+        elif new_user.lower() == "quit":
+            quit()
         else:
-            print("Ummm, I can't seem to find you")
-            return None
-    elif new_user.lower() == "quit":
-        quit()
-    else:
-        print('Incorrect input')
-        return None
+            print('--Invalid response--')
+
+def run_admin():
+    print("--Need to add admin functionality!--")
 
 def find_user_by_id(session, id):
     user = session.query(User).filter(User.user_id == id).first()
@@ -48,24 +50,25 @@ def enter_name():
         last_name = input("What's your last name? \n")
         if len(first_name ) > 0 and len(last_name) > 0:
             return first_name.title(), last_name.title()
+        elif first_name or last_name is "quit" or "exit":
+            quit()
         else:
             print("Not a valid name. Please enter a string longer than 0 characters.")
             continue
 
 def add_new_user(session, first_name, last_name):
-    if (isinstance(first_name, str) and isinstance(last_name, str)):
-        fn = first_name
-        ln = last_name
-        n_user = User(first_name=fn, last_name=ln)
-        session.add(n_user)
-        #difference between commit and flush
-        session.commit()
-        return find_user_by_id(session, n_user.user_id)
-    else:
-        return None
+    fn = first_name
+    ln = last_name
+    n_user = User(first_name=fn, last_name=ln)
+    session.add(n_user)
+    #difference between commit and flush
+    session.commit()
+    return find_user_by_id(session, n_user.user_id)
+
+
+x = PrettyTable()
 
 def show_user_applications(user):
-    x = PrettyTable()
     x.field_names = ["application id", "job title", "company", "location", "salary($)", "remote", "application status"]
     if isinstance(user, User):
         rows = []
@@ -91,14 +94,14 @@ def menu_choice():
     if choice in ["a", "b", "c", "d"]:
         return choice
     else:
-        print('The entered value is not valid!')
+        print('--Invalid response--')
         return None
 
 def process_choice(session, choice, user):
     if choice == "a":
         pass
     if choice == "b":
-        handle_filter_applications(user)
+        handle_application_filter(user)
     if choice == "c":
         app_id = check_app_id(user)
         update_application_status(session, app_id)
@@ -107,21 +110,17 @@ def process_choice(session, choice, user):
     if choice == "d":
         handle_remove_application(session, user)
 
-def handle_filter_applications(user):
-    while True:
-        menu = f'How would you like to filter? \n' \
-            + f'A. by job title \n' \
-            + f'B. by company \n' \
-            + f'C. by location \n' \
-            + f'D. by salary \n' \
-            + f'E. by remote \n' \
-            + f'F. by application status'
-        print(menu)
-        filter = filter_choice()
-        if filter:
-            filtering_by = process_filter(user, filter)
-            filter = filtering_by
-            break
+def handle_application_filter(user):
+    menu = f'How would you like to filter? \n' \
+        + f'A. by job title \n' \
+        + f'B. by company \n' \
+        + f'C. by location \n' \
+        + f'D. by salary \n' \
+        + f'E. by remote \n' \
+        + f'F. by application status'
+    print(menu)
+    filter = filter_choice()
+    process_filter(filter)
 
 def filter_choice():
     while True:
@@ -130,20 +129,10 @@ def filter_choice():
         if filter_choice in ["a", "b", "c", "d", "e", "f"]:
             return filter_choice
         else:
-            print('The entered value is not valid!')
+            print('--Invalid response--')
             continue
 
-def process_filter(user, filter):
-        x = PrettyTable()
-        x.field_names = ["application id", "job title", "company", "location", "salary($)", "remote", "application status"]
-        rows = []
-        for app in user.applications:
-            if app.active:
-                job = app.job
-                app_record = [app.application_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote, app.status]
-                rows.append(app_record)
-        x.add_rows(rows)
-
+def process_filter(filter):
         if filter == "a":
             print("Filtering by: job title")
             print(x.get_string(sortby="job title"))

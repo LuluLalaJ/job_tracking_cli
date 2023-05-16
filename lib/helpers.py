@@ -110,8 +110,9 @@ def process_choice(session, choice, user):
             print("Please enter the id of the application that you wish to delete:")
             application_id = input()
             try:
-                if 0 < int(application_id) < session.query(Application).count():
-                    #same as the comment on choice c validating application_id
+                application_id = int(application_id)
+                app_id_exists = application_id in user_active_app_id(user)
+                if app_id_exists:
                     deactivate_application(session, application_id)
                     show_user_applications(user)
                     break

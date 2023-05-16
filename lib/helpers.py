@@ -98,7 +98,7 @@ def process_choice(session, choice, user):
     if choice == "a":
         pass
     if choice == "b":
-        handle_filter_applications(session)
+        handle_filter_applications(user)
     if choice == "c":
         app_id = check_app_id(user)
         update_application_status(session, app_id)
@@ -107,7 +107,7 @@ def process_choice(session, choice, user):
     if choice == "d":
         handle_remove_application(session, user)
 
-def handle_filter_applications(session):
+def handle_filter_applications(user):
     while True:
         menu = f'How would you like to filter? \n' \
             + f'A. by job title \n' \
@@ -119,31 +119,49 @@ def handle_filter_applications(session):
         print(menu)
         filter = filter_choice()
         if filter:
-            filtering_by = process_filter(session, filter)
+            filtering_by = process_filter(user, filter)
             filter = filtering_by
+            break
 
 def filter_choice():
-    print('Please choose a filter: A, B, C, D, E, or F')
-    filter_choice = input().lower()
-    if filter_choice in ["a", "b", "c", "d", "e", "f"]:
-        return filter_choice
-    else:
-        print('The entered value is not valid!')
-        return None
+    while True:
+        print('Please choose a filter: A, B, C, D, E, or F')
+        filter_choice = input().lower()
+        if filter_choice in ["a", "b", "c", "d", "e", "f"]:
+            return filter_choice
+        else:
+            print('The entered value is not valid!')
+            continue
 
-def process_filter(filter):
-    if filter == "a":
-        pass
-    if filter == "b":
-        pass
-    if filter == "c":
-        pass
-    if filter == "d":
-        pass
-    if filter == "e":
-        pass
-    if filter == "f":
-        pass
+def process_filter(user, filter):
+        x = PrettyTable()
+        x.field_names = ["application id", "job title", "company", "location", "salary($)", "remote", "application status"]
+        rows = []
+        for app in user.applications:
+            if app.active:
+                job = app.job
+                app_record = [app.application_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote, app.status]
+                rows.append(app_record)
+        x.add_rows(rows)
+
+        if filter == "a":
+            print("Filtering by: job title")
+            print(x.get_string(sortby="job title"))
+        if filter == "b":
+            print("Filtering by: company")
+            print(x.get_string(sortby="company"))
+        if filter == "c":
+            print("Filtering by: location")
+            print(x.get_string(sortby="location"))
+        if filter == "d":
+            print("Filtering by: salary")
+            print(x.get_string(sortby="salary($)"))
+        if filter == "e":
+            print("Filtering by: remote")
+            print(x.get_string(sortby="remote"))
+        if filter == "f":
+            print("Filtering by: application status")
+            print(x.get_string(sortby="application status"))
 
 def handle_remove_application(session, user):
     while True:

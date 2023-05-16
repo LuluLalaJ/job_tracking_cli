@@ -92,36 +92,16 @@ def menu_choice():
         print('The entered value is not valid!')
         return None
 
-def all_active_app_ids(user):
-    applications = user.applications
-    return [app.application_id for app in applications]
-
 def process_choice(session, choice, user):
     if choice == "a":
         pass
     if choice == "b":
         pass
     if choice == "c":
-        updating_application = True
-        while updating_application:
-            
-            check_id_type = True
-            while check_id_type:
-                print("Please enter the id of the application that you wish to update")
-                application_id = input()
-                try:
-                    application_id = int(application_id)
-                except ValueError:
-                    print("Invalid Application ID. Please enter a valid integer value.")
-                    check_id_type = False
-                #same issue, is there a way not to go back all the way to interacting_with_db
-                #if app id is not valid but to enter allow users to enter the application id again?
-                if int(application_id) not in all_active_app_ids(user):
-                    print('The application id is not valid')
-                    return None
-            update_application_status(session, int(application_id))
-            show_user_applications(user)
-            return None 
+        app_id = check_app_id(user)
+        update_application_status(session, app_id)
+        show_user_applications(user)
+        return
 
     if choice == "d":
         print("Please enter the id of the application that you wish to delete:")
@@ -131,7 +111,6 @@ def process_choice(session, choice, user):
         show_user_applications(user)
         return None
 
-
 def deactivate_application(session, app_id):
     app = session.query(Application).filter(Application.application_id == app_id)
     app.update({
@@ -140,28 +119,47 @@ def deactivate_application(session, app_id):
     session.commit()
     print('The application is deleted!')
 
-#is there a way to add go back to the previous menu??
+def check_app_id(user):
+    while True:
+            app_id = input('Enter your app id: \n')
+            try:
+                app_id = int(app_id)
+                app_id_exists = app_id in user_active_app_id(user)
+                if app_id_exists:
+                    return app_id
+                else:
+                    print('App ID does not exist in DB. pleaset try gain!')
+            except ValueError:
+                print('Invalid input. Please enter an integer value.')
+
+def user_active_app_id(user):
+    applications = user.applications
+    return [app.application_id for app in applications]
+
 def update_application_status(session, app_id):
-    print('Please select the new applicaiton status:')
+    while True:
+        print_app_status_menu()
+        new_status = input('Select the new status: \n')
+        try:
+            new_status = int(new_status)
+            if new_status == len(APPLICATION_STATUS) + 1:
+                quit()
+            if new_status in range (1, len(APPLICATION_STATUS) + 1):
+                app = session.query(Application).filter_by(application_id = app_id)
+                app.update({
+                    'status': APPLICATION_STATUS[new_status-1]
+                })
+                session.commit()
+                print('The application status is updated!')
+                break
+            else:
+                print('Invalid input. Please enter an interger between 1 and 8.')
+        except ValueError:
+            print('Invalid input. Please enter an integer value.')
+
+def print_app_status_menu():
     i = 1
     for status in APPLICATION_STATUS:
         print(f'{i}. {status.capitalize()}')
         i += 1
     print(f'{i}. exist the program')
-
-    choice = input()
-    #need to think about the type of choice before the following?
-
-    if int(choice) == i or choice.lower() == 'quit':
-        quit()
-    if int(choice) in range(1, i):
-        app = session.query(Application).filter(Application.application_id == app_id)
-        app.update({
-            'status': APPLICATION_STATUS[int(choice)-1]
-        })
-        session.commit()
-        print('The application status is updated!')
-    else:
-        #maybe need to let the user to choose again
-        print ("Invalid choice!")
-        return None

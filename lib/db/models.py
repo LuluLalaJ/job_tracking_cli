@@ -61,8 +61,8 @@ class Application(Base):
     status = Column(String())
     active = Column(Boolean())
 
-    job_id = Column(String(), ForeignKey("jobs.job_id"))
-    user_id = Column(String(), ForeignKey("users.user_id"))
+    job_id = Column(Integer(), ForeignKey("jobs.job_id"))
+    user_id = Column(Integer(), ForeignKey("users.user_id"))
 
     #create relationships
     #Many-to-Many with an Association Object

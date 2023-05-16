@@ -43,12 +43,22 @@ def find_user_by_id(session, id):
     return user
 
 def enter_name():
-    #need to add validation!
-    print("What's your first name?")
-    first_name = input()
-    print("Waht's your last name?")
-    last_name = input()
-    return first_name.title(), last_name.title()
+    while True:
+        first_name = ""
+        last_name = ""
+
+        print("What's your first name?")
+        first_input = input()
+        print("What's your last name?")
+        last_input = input()
+
+        if len(first_input ) > 0 and len(last_input) > 0:
+            first_name = first_input
+            last_name = last_input
+            return first_name.title(), last_name.title()
+        else:
+            print("Not a valid name. Please enter a string longer than 0 characters.")
+            continue
 
 def add_new_user(session, first_name, last_name):
     if (isinstance(first_name, str) and isinstance(last_name, str)):

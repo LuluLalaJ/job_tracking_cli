@@ -44,15 +44,9 @@ def find_user_by_id(session, id):
 
 def enter_name():
     while True:
-        first_name = ""
-        last_name = ""
-        print("What's your first name?")
-        first_input = input()
-        print("What's your last name?")
-        last_input = input()
-        if len(first_input ) > 0 and len(last_input) > 0:
-            first_name = first_input
-            last_name = last_input
+        first_name = input("What's your first name? \n")
+        last_name = input("What's your last name? \n")
+        if len(first_name ) > 0 and len(last_name) > 0:
             return first_name.title(), last_name.title()
         else:
             print("Not a valid name. Please enter a string longer than 0 characters.")
@@ -132,12 +126,20 @@ def process_choice(session, choice, user):
             return None 
 
     if choice == "d":
-        print("Please enter the id of the application that you wish to delete:")
-        application_id = input()
-        #same as the comment on choice c validating application_id
-        deactivate_application(session, int(application_id))
-        show_user_applications(user)
-        return None
+        while True:
+            print("Please enter the id of the application that you wish to delete:")
+            application_id = input()
+            try:
+                if 0 < int(application_id) < session.query(Application).count():
+                    #same as the comment on choice c validating application_id
+                    deactivate_application(session, application_id)
+                    show_user_applications(user)
+                    break
+                else:
+                    print("Error: Application ID must be valid ID number.")
+                    continue
+            except ValueError:
+                print("Error: ID must be an integer.")
 
 
 def deactivate_application(session, app_id):

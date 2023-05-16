@@ -18,7 +18,7 @@ if __name__ == '__main__':
     print('Welcome to job application tracker!')
     validating_user = True
     while validating_user:
-        print('Are you a new user? y/n; enter "quit" to exist')
+        print('Are you a new user? y/n; enter "quit" to exit')
         validated_user = validate_user(session)
         if validated_user:
             print(validated_user)

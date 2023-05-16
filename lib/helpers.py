@@ -15,10 +15,10 @@ def validate_user(session):
     #how can I enable quit to exist anytime??
     new_user = input()
     if (new_user.lower() == 'y'):
-        print("let's add you to the database!")
+        print("Let's add you to the database!")
         first_name, last_name = enter_name()
         new_user = add_new_user(session, first_name, last_name)
-        print("You're in the system! here's your info:")
+        print("You're in the system! Here is your info:")
         return new_user
     elif (new_user.lower() == ('n')):
         print("Let's find you in the database!")
@@ -46,12 +46,10 @@ def enter_name():
     while True:
         first_name = ""
         last_name = ""
-
         print("What's your first name?")
         first_input = input()
         print("What's your last name?")
         last_input = input()
-
         if len(first_input ) > 0 and len(last_input) > 0:
             first_name = first_input
             last_name = last_input
@@ -62,8 +60,8 @@ def enter_name():
 
 def add_new_user(session, first_name, last_name):
     if (isinstance(first_name, str) and isinstance(last_name, str)):
-        fn = first_name.title()
-        ln = last_name.title()
+        fn = first_name
+        ln = last_name
         n_user = User(first_name=fn, last_name=ln)
         session.add(n_user)
         #difference between commit and flush

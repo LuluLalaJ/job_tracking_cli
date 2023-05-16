@@ -8,6 +8,8 @@ from sqlalchemy.orm import sessionmaker
 
 from models import Job, User, Application
 
+# Figure out how to install Faker and Prettytable for users automatically with pip install
+
 fake = Faker()
 
 engine = create_engine('sqlite:///jobtracking.db')

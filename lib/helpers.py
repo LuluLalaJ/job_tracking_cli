@@ -21,7 +21,7 @@ def validate_user(session):
         print("You're in the system! here's your info:")
         return new_user
     elif (new_user.lower() == ('n')):
-        print("let's find you in the database!")
+        print("Let's find you in the database!")
         first_name, last_name = enter_name()
         print("What's your user id")
         id = input()
@@ -82,7 +82,7 @@ def show_user_applications(user):
         return None
 
 def menu_choice():
-    print('Please enter a your choice: A, B, C, D, or E')
+    print('Please enter your choice: A, B, C, D, or E')
     choice = input().lower()
     if choice == "e" or choice == "quit":
         quit()
@@ -102,16 +102,26 @@ def process_choice(session, choice, user):
     if choice == "b":
         pass
     if choice == "c":
-        print("Please enter the id of the application that you wish to update")
-        application_id = input()
-        #same issue, is there a way not to go back all the way to interacting_with_db
-        #if app id is not valid but to enter allow users to enter the application id again?
-        if int(application_id) not in all_active_app_ids(user):
-            print('The application id is not valid')
-            return None
-        update_application_status(session, int(application_id))
-        show_user_applications(user)
-        return None 
+        updating_application = True
+        while updating_application:
+            
+            check_id_type = True
+            while check_id_type:
+                print("Please enter the id of the application that you wish to update")
+                application_id = input()
+                try:
+                    application_id = int(application_id)
+                except ValueError:
+                    print("Invalid Application ID. Please enter a valid integer value.")
+                    check_id_type = False
+                #same issue, is there a way not to go back all the way to interacting_with_db
+                #if app id is not valid but to enter allow users to enter the application id again?
+                if int(application_id) not in all_active_app_ids(user):
+                    print('The application id is not valid')
+                    return None
+            update_application_status(session, int(application_id))
+            show_user_applications(user)
+            return None 
 
     if choice == "d":
         print("Please enter the id of the application that you wish to delete:")
@@ -120,6 +130,7 @@ def process_choice(session, choice, user):
         deactivate_application(session, int(application_id))
         show_user_applications(user)
         return None
+
 
 def deactivate_application(session, app_id):
     app = session.query(Application).filter(Application.application_id == app_id)

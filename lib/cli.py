@@ -33,7 +33,7 @@ if __name__ == '__main__':
               + f'B. filter my job applications \n' \
               + f'C. update an existing job application status \n' \
               + f'D. delete an existing job application \n' \
-              + f'E. exist the program'
+              + f'E. exit the program'
         print(menu)
         choice = menu_choice()
         if choice:

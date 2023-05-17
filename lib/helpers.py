@@ -1,5 +1,3 @@
-from db.models import Job, User, Application
-from prettytable import PrettyTable
 
 APPLICATION_STATUS = [
     "to be submitted",
@@ -31,14 +29,13 @@ def validate_user(session):
             else:
                 print("Ummm, I can't seem to find you!")
         elif new_user.lower() == "admin":
-            run_admin()
+            #all admin functions are in admin.py
+            print("Welcome, Admin!")
+            run_admin(session)
         elif new_user.lower() == "quit":
             quit()
         else:
             print('--Invalid response--')
-
-def run_admin():
-    print("--Need to add admin functionality!--")
 
 def find_user_by_id(session, id):
     user = session.query(User).filter(User.user_id == id).first()
@@ -50,7 +47,7 @@ def enter_name():
         last_name = input("What's your last name? \n")
         if len(first_name ) > 0 and len(last_name) > 0:
             return first_name.title(), last_name.title()
-        elif first_name or last_name is "quit" or "exit":
+        elif first_name == "quit" or last_name == "quit":
             quit()
         else:
             print("Not a valid name. Please enter a string longer than 0 characters.")
@@ -65,10 +62,8 @@ def add_new_user(session, first_name, last_name):
     session.commit()
     return find_user_by_id(session, n_user.user_id)
 
-
-x = PrettyTable()
-
 def show_user_applications(user):
+    x = PrettyTable()
     x.field_names = ["application id", "job title", "company", "location", "salary($)", "remote", "application status"]
     if isinstance(user, User):
         rows = []
@@ -273,3 +268,8 @@ def add_new_application(session, user, job_id):
     session.add(new_app)
     session.commit()
     print('The job is added to your application tracking file!')
+
+
+from db.models import Job, User, Application
+from prettytable import PrettyTable
+from admin import *

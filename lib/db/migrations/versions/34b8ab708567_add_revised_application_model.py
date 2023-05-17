@@ -1,8 +1,8 @@
-"""add application model
+"""add revised application model
 
-Revision ID: fec2f90c0a0e
+Revision ID: 34b8ab708567
 Revises: 7d00b0674d57
-Create Date: 2023-05-15 09:56:30.295579
+Create Date: 2023-05-16 20:39:41.514318
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fec2f90c0a0e'
+revision = '34b8ab708567'
 down_revision = '7d00b0674d57'
 branch_labels = None
 depends_on = None
@@ -24,8 +24,8 @@ def upgrade() -> None:
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('status', sa.String(), nullable=True),
     sa.Column('active', sa.Boolean(), nullable=True),
-    sa.Column('job_id', sa.String(), nullable=True),
-    sa.Column('user_id', sa.String(), nullable=True),
+    sa.Column('job_id', sa.Integer(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['job_id'], ['jobs.job_id'], name=op.f('fk_applications_job_id_jobs')),
     sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], name=op.f('fk_applications_user_id_users')),
     sa.PrimaryKeyConstraint('application_id')

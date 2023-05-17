@@ -86,6 +86,21 @@ def show_user_applications(user):
     else:
         return None
 
+def create_user_application_table(user):
+    application_table = PrettyTable()
+    application_table.field_names = ["application id", "job title", "company", "location", "salary($)", "remote", "application status"]
+    if isinstance(user, User):
+        rows = []
+        for app in user.applications:
+            if app.active:
+                job = app.job
+                app_record = [app.application_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote, app.status]
+                rows.append(app_record)
+        application_table.add_rows(rows)
+        return application_table
+    else:
+        return None
+
 def menu_choice():
     print('Please enter your choice: A, B, C, D, or E')
     choice = input().lower()
@@ -99,9 +114,10 @@ def menu_choice():
 
 def process_choice(session, choice, user):
     if choice == "a":
-        # print_viewing_options()
-        # viewing_option_choice = check_viewing_option()
-        show_jobs_by_viewing_option(session, 'all')
+        print_viewing_options()
+        viewing_option = check_viewing_option()
+        jobs = get_jobs_by_options(session, viewing_option)
+        print_job_table(jobs)
         job_id = check_job_id(session, user)
         add_new_application(session, user, job_id)
         # show_user_applications(user)
@@ -229,22 +245,62 @@ def print_app_status_menu():
     print(f'{i}. exist the program')
 
 #Helper functions for adding new applications
-def show_jobs_by_viewing_option(session, viewing_option):
-    x = PrettyTable()
-    if viewing_option == "all":
+def print_job_table(jobs):
+    job_table = PrettyTable()
+    job_table.field_names = ["job id", "job title", "company", "location", "salary($)", "remote"]
+    rows = []
+    for job in jobs:
+        job_record = [job.job_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote]
+        rows.append(job_record)
+    x.add_rows(rows)
+    if rows:
+        print('Here are all the available jobs!')
+        print(job_table)
+    else:
+        print("There are no jobs available in the database!")
+        return
+
+def print_viewing_options():
+    viewing_options = f'How would you like to view the jobs in the database? \n' \
+        + f'1. see ALL the jobs\n' \
+        + f'2. see remote jobs\n' \
+        + f'3. see on-site jobs\n' \
+        + f'4. search jobs by salary\n' \
+        + f'5. search jobs by location\n' \
+        + f'6. bsearch jobs by job title' \
+
+    print(viewing_options)
+
+def check_viewing_option():
+     while True:
+            viewing_option = input('Enter your viewing id: \n')
+            try:
+                viewing_option = int(viewing_option)
+                app_id_exists = viewing_option in range(1, 7)
+                if app_id_exists:
+                    return viewing_option
+                else:
+                    print('Viewing option must be between 1 through 6. pleaset try gain!')
+            except ValueError:
+                print('Invalid input. Please enter an integer value.')
+
+def get_jobs_by_options(session, viewing_option):
+    jobs = None
+    if viewing_option == 1:
         jobs = session.query(Job).all()
-        x.field_names = ["job id", "job title", "company", "location", "salary($)", "remote"]
-        rows = []
-        for job in jobs:
-                job_record = [job.job_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote]
-                rows.append(job_record)
-        x.add_rows(rows)
-        if rows:
-            print('Here are all the available jobs!')
-            print(x)
-        else:
-            print("There are no jobs available in the database!")
-    return
+    if viewing_option == 2:
+        jobs = session.query(Job).filter_by(remote=True)
+    if viewing_option == 3:
+        jobs = session.query(Job).filter_by(remote=False)
+    if viewing_option == 4:
+        salary_min, salary_max = check_salary()
+        jobs = session.query(Job).filter(Job.salary_in_usd.between(salary_min, salary_max))
+    if viewing_option == 5:
+        location = input()
+        jobs = session.query(Job)
+    if viewing_option == 6:
+        pass
+    return jobs
 
 def check_job_id(session, user):
     while True:
@@ -269,7 +325,19 @@ def add_new_application(session, user, job_id):
         status="to be submitted",
         active=True
     )
-
     session.add(new_app)
     session.commit()
     print('The job is added to your application tracking file!')
+
+def check_salary():
+    salary_min = input('Please enter the minimum salary you want: \n')
+    salary_max = input('Please enter the highest salary you want: \n')
+    try:
+        salary_min = int(salary_min)
+        salary_max = int(salary_max)
+        if 0 < salary_min < salary_max:
+            return salary_min, salary_max
+        else:
+            print('Error: salary must be a positive integer and min salary must be smaller than max salary')
+    except ValueError:
+        print("Error: Salary must be an integer.")

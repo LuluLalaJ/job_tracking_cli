@@ -36,9 +36,9 @@ jspm_packages
 /.bundle
 
 # Ignore the default SQLite database.
-/db/*.sqlite3
-/db/*.sqlite3-journal
-/db/*.db
+lib/db/*.sqlite3
+lib/db/*.sqlite3-journal
+lib/db/*.db
 
 # Ignore all logfiles and tempfiles.
 /log/*

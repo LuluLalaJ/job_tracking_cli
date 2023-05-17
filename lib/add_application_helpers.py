@@ -1,6 +1,21 @@
-from db.models import Job, User, Application
+from db.models import Job, Application
 from prettytable import PrettyTable
 from sqlalchemy import func
+from helpers import create_user_application_table
+
+def filter_jobs_add_applications(session, user):
+    while True:
+            print_viewing_options()
+            viewing_option = check_viewing_option()
+            if viewing_option == "go back to previous menu":
+                return
+            jobs = get_jobs_by_options(session, viewing_option)
+            print_job_table(jobs)
+            add_app = check_add_app()
+            if add_app:
+                job_id = check_job_id(user, jobs)
+                add_new_application(session, user, job_id)
+                print(create_user_application_table(user))
 
 def print_job_table(jobs):
     job_table = PrettyTable()

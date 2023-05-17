@@ -2,9 +2,11 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from helpers import (validate_user,
-                    create_user_application_table,
-                    menu_choice, process_choice)
+from helpers import (
+    validate_user,
+    create_user_application_table,
+    menu_choice,
+    process_choice)
 
 if __name__ == '__main__':
     engine = create_engine("sqlite:///db/jobtracking.db")

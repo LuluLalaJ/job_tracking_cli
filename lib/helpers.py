@@ -1,26 +1,6 @@
 from db.models import Job, User, Application
 from prettytable import PrettyTable
 from sqlalchemy import func
-from add_application_helpers import (
-    print_job_table,
-    print_viewing_options,
-    check_viewing_option,
-    get_jobs_by_options,
-    check_job_id,
-    add_new_application,
-    check_add_app)
-
-
-
-APPLICATION_STATUS = [
-    "to be submitted",
-    "submitted",
-    "pending",
-    "under review",
-    "interview scheduled",
-    "approved",
-    "denied"
-    ]
 
 def validate_user(session):
     while True:
@@ -104,21 +84,12 @@ def menu_choice():
 
 def process_choice(session, choice, user):
     if choice == "a":
-        while True:
-            print_viewing_options()
-            viewing_option = check_viewing_option()
-            if viewing_option == "go back to previous menu":
-                return
-            jobs = get_jobs_by_options(session, viewing_option)
-            print_job_table(jobs)
-            add_app = check_add_app()
-            if add_app:
-                job_id = check_job_id(user, jobs)
-                add_new_application(session, user, job_id)
-                print(create_user_application_table(user))
+        filter_jobs_add_applications(session, user)
+        
 
     if choice == "b":
         handle_application_sorting(user)
+
     if choice == "c":
         app_id = check_app_id(user)
         update_application_status(session, app_id)
@@ -126,82 +97,6 @@ def process_choice(session, choice, user):
     if choice == "d":
         handle_remove_application(session, user)
         print(create_user_application_table(user))
-
-def handle_application_sorting(user):
-    menu = f'How would you like to sort your applications? \n' \
-        + f'A. by job title \n' \
-        + f'B. by company \n' \
-        + f'C. by location \n' \
-        + f'D. by salary \n' \
-        + f'E. by remote \n' \
-        + f'F. by application status \n' \
-        + f'G. go back to the main menu \n' \
-        + f'H. quit the program\n' \
-
-    print(menu)
-    sorting = sorting_choice()
-    if sorting == "go back to the main menu":
-        return
-    process_sorting(sorting, user)
-
-def sorting_choice():
-    while True:
-        print('Please choose a sorting method: A, B, C, D, E, F, G, or H')
-        sorting_choice = input().lower()
-        if sorting_choice == "h":
-            quit()
-        if sorting_choice == "g":
-            return "go back to the main menu"
-        if sorting_choice in ["a", "b", "c", "d", "e", "f"]:
-            return sorting_choice
-        else:
-            print('--Invalid response--')
-            continue
-
-def process_sorting(sorting, user):
-    table = create_user_application_table(user)
-    if sorting == "a":
-        print("Filtering by: job title")
-        print(table.get_string(sortby="job title"))
-    if sorting == "b":
-        print("Filtering by: company")
-        print(table.get_string(sortby="company"))
-    if sorting == "c":
-        print("Filtering by: location")
-        print(table.get_string(sortby="location"))
-    if sorting == "d":
-        print("Filtering by: salary")
-        print(table.get_string(sortby="salary($)"))
-    if sorting == "e":
-        print("Filtering by: remote")
-        print(table.get_string(sortby="remote"))
-    if sorting == "f":
-        print("Filtering by: application status")
-        print(table.get_string(sortby="application status"))
-
-def handle_remove_application(session, user):
-    while True:
-        print("Please enter the id of the application that you wish to delete:")
-        application_id = input()
-        try:
-            application_id = int(application_id)
-            app_id_exists = application_id in user_active_app_id(user)
-            if app_id_exists:
-                deactivate_application(session, application_id)
-                break
-            else:
-                print("Error: Application ID must be valid ID number.")
-                continue
-        except ValueError:
-            print("Error: ID must be an integer.")
-
-def deactivate_application(session, app_id):
-    app = session.query(Application).filter(Application.application_id == app_id)
-    app.update({
-        'active': False
-    })
-    session.commit()
-    print('The application is deleted!')
 
 def check_app_id(user):
     while True:
@@ -220,35 +115,8 @@ def user_active_app_id(user):
     applications = user.applications
     return [app.application_id for app in applications]
 
-def update_application_status(session, app_id):
-    while True:
-        print_app_status_menu()
-        new_status = input('Select the new status: \n')
-        try:
-            new_status = int(new_status)
-            if new_status == len(APPLICATION_STATUS) + 1:
-                return
-            if new_status == len(APPLICATION_STATUS) + 2:
-                quit()
-            if new_status in range (1, len(APPLICATION_STATUS) + 1):
-                app = session.query(Application).filter_by(application_id = app_id)
-                app.update({
-                    'status': APPLICATION_STATUS[new_status-1]
-                })
-                session.commit()
-                print('The application status is updated!')
-                break
-            else:
-                print('Invalid input. Please enter an interger between 1 and 8.')
-        except ValueError:
-            print('Invalid input. Please enter an integer value.')
 
-def print_app_status_menu():
-    i = 1
-    for status in APPLICATION_STATUS:
-        print(f'{i}. {status.capitalize()}')
-        i += 1
-    print(f'{i}. No change! Go back to the main menu')
-    print(f'{i+1}. Exist the program')
-
-#Helper functions for adding new applications
+from add_application_helpers import filter_jobs_add_applications
+from sort_application_helpers import handle_application_sorting
+from update_application_helpers import update_application_status
+from deactivate_application_helpers import handle_remove_application

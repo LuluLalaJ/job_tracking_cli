@@ -6,8 +6,9 @@ from sqlalchemy.orm import sessionmaker
 
 #looking into different way of importing
 # from db.models import Job, User, Application
-from helpers import (validate_user, show_user_applications,
-                     menu_choice, process_choice)
+from helpers import (validate_user,
+                    create_user_application_table,
+                    menu_choice, process_choice)
 
 if __name__ == '__main__':
     engine = create_engine(f"sqlite:///db/jobtracking.db")
@@ -19,7 +20,7 @@ if __name__ == '__main__':
 
     validated_user = validate_user(session)
     print(validated_user)
-    show_user_applications(validated_user)
+    print(create_user_application_table(validated_user))
 
     while True:
         menu = f'You can: \n' \

@@ -1,13 +1,7 @@
 
-APPLICATION_STATUS = [
-    "to be submitted",
-    "submitted",
-    "pending",
-    "under review",
-    "interview scheduled",
-    "approved",
-    "denied"
-    ]
+from db.models import Job, User, Application
+from prettytable import PrettyTable
+from sqlalchemy import func
 
 def validate_user(session):
     while True:
@@ -62,9 +56,9 @@ def add_new_user(session, first_name, last_name):
     session.commit()
     return find_user_by_id(session, n_user.user_id)
 
-def show_user_applications(user):
-    x = PrettyTable()
-    x.field_names = ["application id", "job title", "company", "location", "salary($)", "remote", "application status"]
+def create_user_application_table(user):
+    application_table = PrettyTable()
+    application_table.field_names = ["application id", "job title", "company", "location", "salary($)", "remote", "application status"]
     if isinstance(user, User):
         rows = []
         for app in user.applications:
@@ -72,12 +66,8 @@ def show_user_applications(user):
                 job = app.job
                 app_record = [app.application_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote, app.status]
                 rows.append(app_record)
-        x.add_rows(rows)
-        if rows:
-            print('Here are your current active applications:')
-            print(x)
-        else:
-            print("You don't have any active applications!")
+        application_table.add_rows(rows)
+        return application_table
     else:
         return None
 
@@ -94,89 +84,19 @@ def menu_choice():
 
 def process_choice(session, choice, user):
     if choice == "a":
-        # print_viewing_options()
-        # viewing_option_choice = check_viewing_option()
-        show_jobs_by_viewing_option(session, 'all')
-        job_id = check_job_id(session, user)
-        add_new_application(session, user, job_id)
-        # show_user_applications(user)
-        return
+        filter_jobs_add_applications(session, user)
+        
+
     if choice == "b":
-        handle_application_filter(user)
+        handle_application_sorting(user)
+
     if choice == "c":
         app_id = check_app_id(user)
         update_application_status(session, app_id)
-        show_user_applications(user)
-        return
+        print(create_user_application_table(user))
     if choice == "d":
         handle_remove_application(session, user)
-
-def handle_application_filter(user):
-    menu = f'How would you like to filter? \n' \
-        + f'A. by job title \n' \
-        + f'B. by company \n' \
-        + f'C. by location \n' \
-        + f'D. by salary \n' \
-        + f'E. by remote \n' \
-        + f'F. by application status'
-    print(menu)
-    filter = filter_choice()
-    process_filter(filter)
-
-def filter_choice():
-    while True:
-        print('Please choose a filter: A, B, C, D, E, or F')
-        filter_choice = input().lower()
-        if filter_choice in ["a", "b", "c", "d", "e", "f"]:
-            return filter_choice
-        else:
-            print('--Invalid response--')
-            continue
-
-def process_filter(filter):
-        if filter == "a":
-            print("Filtering by: job title")
-            print(x.get_string(sortby="job title"))
-        if filter == "b":
-            print("Filtering by: company")
-            print(x.get_string(sortby="company"))
-        if filter == "c":
-            print("Filtering by: location")
-            print(x.get_string(sortby="location"))
-        if filter == "d":
-            print("Filtering by: salary")
-            print(x.get_string(sortby="salary($)"))
-        if filter == "e":
-            print("Filtering by: remote")
-            print(x.get_string(sortby="remote"))
-        if filter == "f":
-            print("Filtering by: application status")
-            print(x.get_string(sortby="application status"))
-
-def handle_remove_application(session, user):
-    while True:
-        print("Please enter the id of the application that you wish to delete:")
-        application_id = input()
-        try:
-            application_id = int(application_id)
-            app_id_exists = application_id in user_active_app_id(user)
-            if app_id_exists:
-                deactivate_application(session, application_id)
-                show_user_applications(user)
-                break
-            else:
-                print("Error: Application ID must be valid ID number.")
-                continue
-        except ValueError:
-            print("Error: ID must be an integer.")
-
-def deactivate_application(session, app_id):
-    app = session.query(Application).filter(Application.application_id == app_id)
-    app.update({
-        'active': False
-    })
-    session.commit()
-    print('The application is deleted!')
+        print(create_user_application_table(user))
 
 def check_app_id(user):
     while True:
@@ -195,81 +115,9 @@ def user_active_app_id(user):
     applications = user.applications
     return [app.application_id for app in applications]
 
-def update_application_status(session, app_id):
-    while True:
-        print_app_status_menu()
-        new_status = input('Select the new status: \n')
-        try:
-            new_status = int(new_status)
-            if new_status == len(APPLICATION_STATUS) + 1:
-                quit()
-            if new_status in range (1, len(APPLICATION_STATUS) + 1):
-                app = session.query(Application).filter_by(application_id = app_id)
-                app.update({
-                    'status': APPLICATION_STATUS[new_status-1]
-                })
-                session.commit()
-                print('The application status is updated!')
-                break
-            else:
-                print('Invalid input. Please enter an interger between 1 and 8.')
-        except ValueError:
-            print('Invalid input. Please enter an integer value.')
-
-def print_app_status_menu():
-    i = 1
-    for status in APPLICATION_STATUS:
-        print(f'{i}. {status.capitalize()}')
-        i += 1
-    print(f'{i}. exist the program')
-
-#Helper functions for adding new applications
-def show_jobs_by_viewing_option(session, viewing_option):
-    x = PrettyTable()
-    if viewing_option == "all":
-        jobs = session.query(Job).all()
-        x.field_names = ["job id", "job title", "company", "location", "salary($)", "remote"]
-        rows = []
-        for job in jobs:
-                job_record = [job.job_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote]
-                rows.append(job_record)
-        x.add_rows(rows)
-        if rows:
-            print('Here are all the available jobs!')
-            print(x)
-        else:
-            print("There are no jobs available in the database!")
-    return
-
-def check_job_id(session, user):
-    while True:
-        job_id = input('Enter your job id: \n')
-        try:
-            job_id = int(job_id)
-            job_id_exists = job_id in [job.job_id for job in session.query(Job).all()]
-            user_active_job_ids = [app.job_id for app in user.applications if app.active]
-            if job_id_exists and (job_id not in user_active_job_ids):
-                return job_id
-            if job_id_exists:
-                print("You have already added this job app! Add something else!")
-            else:
-                print('App ID does not exist in DB. pleaset try gain!')
-        except ValueError:
-            print('Invalid input. Please enter an integer value.')
-
-def add_new_application(session, user, job_id):
-    new_app = Application(
-        job_id=job_id,
-        user_id =user.user_id,
-        status="to be submitted",
-        active=True
-    )
-
-    session.add(new_app)
-    session.commit()
-    print('The job is added to your application tracking file!')
 
 
-from db.models import Job, User, Application
-from prettytable import PrettyTable
-from admin import *
+from add_application_helpers import filter_jobs_add_applications
+from sort_application_helpers import handle_application_sorting
+from update_application_helpers import update_application_status
+from deactivate_application_helpers import handle_remove_application

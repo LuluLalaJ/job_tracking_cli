@@ -99,7 +99,13 @@ def menu_choice():
 
 def process_choice(session, choice, user):
     if choice == "a":
-        pass
+        # print_viewing_options()
+        # viewing_option_choice = check_viewing_option()
+        show_jobs_by_viewing_option(session, 'all')
+        job_id = check_job_id(session, user)
+        add_new_application(session, user, job_id)
+        # show_user_applications(user)
+        return
     if choice == "b":
         handle_application_filter(user)
     if choice == "c":
@@ -221,3 +227,49 @@ def print_app_status_menu():
         print(f'{i}. {status.capitalize()}')
         i += 1
     print(f'{i}. exist the program')
+
+#Helper functions for adding new applications
+def show_jobs_by_viewing_option(session, viewing_option):
+    x = PrettyTable()
+    if viewing_option == "all":
+        jobs = session.query(Job).all()
+        x.field_names = ["job id", "job title", "company", "location", "salary($)", "remote"]
+        rows = []
+        for job in jobs:
+                job_record = [job.job_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote]
+                rows.append(job_record)
+        x.add_rows(rows)
+        if rows:
+            print('Here are all the available jobs!')
+            print(x)
+        else:
+            print("There are no jobs available in the database!")
+    return
+
+def check_job_id(session, user):
+    while True:
+        job_id = input('Enter your job id: \n')
+        try:
+            job_id = int(job_id)
+            job_id_exists = job_id in [job.job_id for job in session.query(Job).all()]
+            user_active_job_ids = [app.job_id for app in user.applications if app.active]
+            if job_id_exists and (job_id not in user_active_job_ids):
+                return job_id
+            if job_id_exists:
+                print("You have already added this job app! Add something else!")
+            else:
+                print('App ID does not exist in DB. pleaset try gain!')
+        except ValueError:
+            print('Invalid input. Please enter an integer value.')
+
+def add_new_application(session, user, job_id):
+    new_app = Application(
+        job_id=job_id,
+        user_id =user.user_id,
+        status="to be submitted",
+        active=True
+    )
+
+    session.add(new_app)
+    session.commit()
+    print('The job is added to your application tracking file!')

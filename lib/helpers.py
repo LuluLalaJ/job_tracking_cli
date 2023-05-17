@@ -85,7 +85,7 @@ def menu_choice():
 def process_choice(session, choice, user):
     if choice == "a":
         filter_jobs_add_applications(session, user)
-        
+
 
     if choice == "b":
         handle_application_sorting(user)
@@ -121,3 +121,4 @@ from add_application_helpers import filter_jobs_add_applications
 from sort_application_helpers import handle_application_sorting
 from update_application_helpers import update_application_status
 from deactivate_application_helpers import handle_remove_application
+from admin import run_admin

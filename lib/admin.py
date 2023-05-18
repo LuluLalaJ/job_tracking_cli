@@ -88,24 +88,37 @@ def edit_job_in_db(session):
         remote = input("Enter the updated Remote (True/False): ").title()
 
         try:
-            if remote == "True" or remote == "False":
-                if remote == "True":
-                    remote = 1
-                if remote == "False":
-                    remote = 0
-                job.job_title = job_title
-                job.company = company
-                job.location = location
-                job.salary_in_usd = int(salary)
-                job.remote = bool(remote)
-
-                session.commit()
-                print("Row updated successfully.")
+            if remote == "True":
+                remote = 1
+            elif remote == "False":
+                remote = 0
             else:
-                print('Remote must be True or False')
+                print("Remote must be 'True' or 'False'")
+                return
+            bool(remote)
+        except ValueError:
+            print("Remote must be 'True' or 'False'")
+            return
+
+        try:
+            valid_salary = int(salary)
         except ValueError:
             print('Salary must be an integer value')
+            return
 
+        if valid_salary <= 0:
+            print("Salary must be a positive integer.")
+            return
+        else:
+            job.job_title = job_title
+            job.company = company
+            job.location = location
+            job.salary_in_usd = valid_salary
+            job.remote = bool(remote)
+
+            session.commit()
+            print("Row updated successfully.")
+                
     else:
         print("Row not found.")
 

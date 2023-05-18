@@ -1,6 +1,6 @@
 from db.models import Job, User, Application
 from prettytable import PrettyTable
-from helpers import validate_user
+from helpers import validate_user, main_menu, create_user_application_table
 
 def run_admin(session):
     while True:
@@ -30,7 +30,10 @@ def admin_choice(session):
     elif choice == "f":
         delete_user_from_db(session)
     elif choice == "g":
-        validate_user(session)
+        validated_user = validate_user(session)
+        print(validated_user)
+        print(create_user_application_table(validated_user))
+        main_menu(session, validated_user)
     else:
         print('--Invalid response--')
 

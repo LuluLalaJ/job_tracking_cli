@@ -31,6 +31,20 @@ def validate_user(session):
         else:
             print('--Invalid response--')
 
+def main_menu(session, validated_user):
+    while True:
+        menu = f'You can: \n' \
+              + f'A. add a new job application \n' \
+              + f'B. sort my applications \n' \
+              + f'C. update an existing job application status \n' \
+              + f'D. delete an existing job application \n' \
+              + f'E. exit the program'
+        print(menu)
+        choice = menu_choice()
+        if choice:
+            done_processing = process_choice(session, choice, validated_user)
+            choice = done_processing
+
 def find_user_by_id(session, id):
     user = session.query(User).filter(User.user_id == id).first()
     return user

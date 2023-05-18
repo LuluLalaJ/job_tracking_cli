@@ -6,7 +6,8 @@ from helpers import (
     validate_user,
     create_user_application_table,
     menu_choice,
-    process_choice)
+    process_choice,
+    main_menu)
 
 if __name__ == '__main__':
     engine = create_engine("sqlite:///db/jobtracking.db")
@@ -20,15 +21,4 @@ if __name__ == '__main__':
     print(validated_user)
     print(create_user_application_table(validated_user))
 
-    while True:
-        menu = f'You can: \n' \
-              + f'A. add a new job application \n' \
-              + f'B. sort my applications \n' \
-              + f'C. update an existing job application status \n' \
-              + f'D. delete an existing job application \n' \
-              + f'E. exit the program'
-        print(menu)
-        choice = menu_choice()
-        if choice:
-            done_processing = process_choice(session, choice, validated_user)
-            choice = done_processing
+    main_menu(session, validated_user)

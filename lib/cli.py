@@ -11,7 +11,6 @@ from rich import print
 from rich.padding import Padding
 
 
-
 if __name__ == '__main__':
     engine = create_engine("sqlite:///db/jobtracking.db")
     Session = sessionmaker()

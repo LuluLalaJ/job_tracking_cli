@@ -1,36 +1,26 @@
-# Phase 3 CLI Project Template
+# Job CLI Tracking Application
 
-## Learning Goals
+This is a CLI application that allows users to search for available jobs and keep track of the jobs they are applying. The admin of the app ....
 
-- Discuss the basic directory structure of a CLI.
-- Outline the first steps in building a CLI.
+## Installation
 
-***
-
-## Introduction
-
-You now have a basic idea of what constitutes a CLI, but you (understandably!)
-likely don't have the best idea of where to start. Fork and clone this lesson
-for a template for your CLI. Take a look at the directory structure before we
-begin:
+Clone this repo and run the following commands to set up the dependencies:
 
 ```console
-.
-├── Pipfile
-├── Pipfile.lock
-├── README.md
-└── lib
-    ├── cli.py
-    ├── db
-    │   ├── models.py
-    │   └── seed.py
-    ├── debug.py
-    └── helpers.py
+$ cd job_tracking_app
+$ pipenv install && pipenv shell
 ```
 
-> **Note: You may already know some or all of the material covered in this
-> lesson. We hope that having it all in one place will help you in designing
-> and developing your project, regardless of where you're starting off.**
+You will also need to setup the sqlite3 database & populate the data:
+```console
+$ cd lib/db
+$ alembic upgrade head
+$ python seed.py
+```
+
+Once the database is setup, return to the t
+$ cd
+
 
 ***
 

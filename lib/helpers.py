@@ -70,8 +70,8 @@ def enter_name():
         elif first_name == "quit" or last_name == "quit":
             quit()
         else:
-            print("Not a valid name. Please enter a string longer than 0 characters.")
-            continue
+            c.print("Not a valid name. Please enter a string longer than 0 characters.", style="error")
+
 
 def add_new_user(session, first_name, last_name):
     fn = first_name
@@ -121,14 +121,14 @@ def create_user_application_table(user):
         return None
 
 def menu_choice():
-    print('Please enter your choice: A, B, C, D, or E')
+    c.print('Please enter your choice: A, B, C, D, or E', style="menu")
     choice = input().lower()
     if choice == "e" or choice == "quit":
         quit()
     if choice in ["a", "b", "c", "d"]:
         return choice
     else:
-        print('--Invalid response--')
+        c.print('--Invalid response--', style="error")
         return None
 
 def process_choice(session, choice, user):
@@ -156,9 +156,9 @@ def check_app_id(user):
                 if app_id_exists:
                     return app_id
                 else:
-                    print('App ID does not exist in DB. pleaset try gain!')
+                    c.print('App ID does not exist in DB. pleaset try gain!', style="error")
             except ValueError:
-                print('Invalid input. Please enter an integer value.')
+                c.print('Invalid input. Please enter an integer value.', style="error")
 
 def user_active_app_id(user):
     applications = user.applications

@@ -120,7 +120,7 @@ def create_user_application_table(user):
 #         return None
 
 def menu_choice():
-    c.print('Please enter your choice: A, B, C, D, or E', style="menu")
+    print('Please enter your choice: A, B, C, D, or E')
     choice = input().lower()
     if choice == "e" or choice == "quit":
         quit()

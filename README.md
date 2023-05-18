@@ -1,6 +1,6 @@
-# Job CLI Tracking Application
+# Job Tracking CLI Application
 
-This is a CLI application that allows users to search for available jobs and keep track of the jobs they are applying. The CLI app is built with Python, Rich, and PrettyTable. The database in built with SQLite3, SQLAlchemy, and Alembic.
+This is a CLI application that allows users to search for available jobs and keep track of the jobs they are applying to. The CLI app is built with Python, Rich, and PrettyTable. The database in built with SQLite3, SQLAlchemy, and Alembic.
 
 ## Installation
 

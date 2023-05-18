@@ -34,7 +34,7 @@ def print_job_table(jobs):
         c.print("There are no jobs available in the database!", style="error")
 
 def print_viewing_options():
-    print("How would you like to view the jobs in the database?")
+    c.print("How would you like to view the jobs in the database?", style="prompt")
     viewing_options = f'A. see ALL the jobs\n' \
         + f'B. see remote jobs\n' \
         + f'C. see on-site jobs\n' \
@@ -48,7 +48,8 @@ def print_viewing_options():
 
 def check_viewing_option():
     while True:
-        viewing_option = input('Enter your choice: \n').lower()
+        c.print('Enter your choice:', style="prompt")
+        viewing_option = input().lower()
         if viewing_option == "h":
             return "go back to previous menu"
         elif viewing_option == "i":
@@ -70,19 +71,23 @@ def get_jobs_by_options(session, viewing_option):
         salary_min, salary_max = check_salary()
         jobs = session.query(Job).filter(Job.salary_in_usd.between(salary_min, salary_max)).all()
     elif viewing_option == "e":
-        location = input("Search by location: \n")
+        c.print("Search by location:", style="prompt")
+        location = input()
         jobs = session.query(Job).filter(Job.location.ilike(f'%{location}%')).all()
     elif viewing_option == "f":
-        title = input("Search by job title: \n")
+        c.print("Search by job title:", style="prompt")
+        title = input()
         jobs = session.query(Job).filter(Job.job_title.ilike(f'%{title}%')).all()
     elif viewing_option == "g":
-        company = input("Search by company: \n")
+        c.print("Search by company:", style="prompt")
+        company = input()
         jobs = session.query(Job).filter(Job.company.ilike(f'%{company}%')).all()
     return jobs
 
 def check_job_id(user, jobs):
     while True:
-        job_id = input("Enter your job id or 'Q' to return to the previous menu: \n").lower()
+        c.print("Enter your job id or 'Q' to return to the previous menu:", style="prompt")
+        job_id = input().lower()
         if job_id == "q":
             return
         else:
@@ -111,8 +116,10 @@ def add_new_application(session, user, job_id):
     c.print('The job is added to your application tracking file!', style="success")
 
 def check_salary():
-    salary_min = input('Please enter the minimum salary you want: \n')
-    salary_max = input('Please enter the highest salary you want: \n')
+    c.print('Please enter the minimum salary you want:', style="prompt")
+    salary_min = input()
+    c.print('Please enter the highest salary you want:', style="prompt")
+    salary_max = input()
     try:
         salary_min = int(salary_min)
         salary_max = int(salary_max)
@@ -125,9 +132,9 @@ def check_salary():
 
 def check_add_app():
     while True:
-        print('Do you want to:')
+        c.print('Do you want to:', style="prompt")
         c.print(f'A. add a job application \n' \
-                + f'B. return to the previous menu \n', style="menu")
+                + f'B. return to the previous menu', style="menu")
         answer = input().lower()
         if answer == "a":
             return True

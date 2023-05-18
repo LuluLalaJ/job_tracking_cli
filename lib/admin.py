@@ -121,13 +121,13 @@ def validate_salary(value, session):
 
 def validate_remote(value, session):
     if value == "True":
-        value = 1
+        value = True
     elif value == "False":
-        value = 0
+        value = False
     else:
         c.print("Remote must be 'True' or 'False'", style="error")
         run_admin(session)
-    return bool(value)
+    return value
 
 def delete_job_from_db(session):
     c.print("Enter the ID of the job you want to remove:", style="prompt")

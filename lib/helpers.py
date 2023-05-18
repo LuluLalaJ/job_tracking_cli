@@ -16,24 +16,26 @@ c = Console(theme=custom_theme)
 
 def validate_user(session):
     while True:
-        new_user = input('Are you a new user? y/n; (Type "quit" to exit) \n')
-        if (new_user.lower() == 'y'):
-            print("Let's add you to the database!")
+        c.print("Are you a new user? Y/N; (Type [red]'quit'[/red] to exit)")
+        new_user = input().lower()
+        if (new_user == 'y'):
+            c.print("Let's add you to the database!", style="prompt")
             first_name, last_name = enter_name()
             new_user = add_new_user(session, first_name, last_name)
             c.print("You're in the system! Here is your info:", style="success")
             return new_user
-        elif (new_user.lower() == ('n')):
-            print("Let's find you in the database!")
+        elif (new_user == ('n')):
+            c.print("Let's find you in the database!", style="prompt")
             first_name, last_name = enter_name()
-            id = input("What's your user id? \n")
+            c.print("What's your user id?", style="prompt")
+            id = input()
             existing_user = find_user_by_id(session, id)
             if existing_user and existing_user.first_name == first_name and existing_user.last_name == last_name:
                 c.print('Welcome back!', style="success")
                 return existing_user
             else:
                 c.print("Ummm, I can't seem to find you!", style="error")
-        elif new_user.lower() == "admin":
+        elif new_user == "admin":
             #all admin functions are in admin.py
             c.print("Welcome, Admin!", style="success")
             run_admin(session)
@@ -44,12 +46,12 @@ def validate_user(session):
 
 def main_menu(session, validated_user):
     while True:
-        print('You can:')
+        c.print('You can:', style="menu")
         menu = f'A. add a new job application \n' \
-              + f'B. sort my applications \n' \
-              + f'C. update an existing job application status \n' \
-              + f'D. delete an existing job application \n' \
-              + f'E. exit the program'
+            + f'B. sort my applications \n' \
+            + f'C. update an existing job application status \n' \
+            + f'D. delete an existing job application \n' \
+            + f'E. exit the program'
         c.print(menu, style="menu")
         choice = menu_choice()
         if choice:
@@ -62,15 +64,16 @@ def find_user_by_id(session, id):
 
 def enter_name():
     while True:
-        first_name = input("What's your first name? \n")
-        last_name = input("What's your last name? \n")
+        c.print("What's your first name?", style="prompt")
+        first_name = input()
+        c.print("What's your last name?", style="prompt")
+        last_name = input()
         if len(first_name ) > 0 and len(last_name) > 0:
             return first_name.title(), last_name.title()
         elif first_name == "quit" or last_name == "quit":
             quit()
         else:
             c.print("Not a valid name. Please enter a string longer than 0 characters.", style="error")
-
 
 def add_new_user(session, first_name, last_name):
     fn = first_name
@@ -96,31 +99,8 @@ def create_user_application_table(user):
     else:
         return None
 
-# def create_user_application_table(user):
-#     application_table = Table(
-#         title=f"{user.first_name}'s applications",
-#         title_style="bold red",
-#         box=box.SQUARE_DOUBLE_HEAD)
-
-#     application_table.add_column("application id", justify="center", style="bold red3")
-#     application_table.add_column("job title", justify="center", style="sky_blue1")
-#     application_table.add_column("company", justify="center", style="sky_blue1")
-#     application_table.add_column("location", justify="center", style="sky_blue1")
-#     application_table.add_column("salary($)", justify="center", style="bold red3")
-#     application_table.add_column("remote", justify="center", style="sky_blue1")
-#     application_table.add_column("application status", justify="center", style="light_green")
-
-#     if isinstance(user, User):
-#         for app in user.applications:
-#             if app.active:
-#                 job = app.job
-#                 application_table.add_row(str(app.application_id), job.job_title, job.company, job.location, str(job.salary_in_usd), str(job.remote), app.status)
-#         return application_table
-#     else:
-#         return None
-
 def menu_choice():
-    print('Please enter your choice: A, B, C, D, or E')
+    c.print('Please enter your choice: A, B, C, D, or E', style="prompt")
     choice = input().lower()
     if choice == "e" or choice == "quit":
         quit()
@@ -148,7 +128,8 @@ def process_choice(session, choice, user):
 
 def check_app_id(user):
     while True:
-            app_id = input('Enter your app id: \n')
+            c.print('Enter your app id:', style="prompt")
+            app_id = input()
             try:
                 app_id = int(app_id)
                 app_id_exists = app_id in user_active_app_id(user)

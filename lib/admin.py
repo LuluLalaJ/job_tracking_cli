@@ -56,15 +56,26 @@ def add_job_to_db(session):
     salary = input("Salary: ")
     remote = input("Remote (True/False): ").title()
 
-    new_job = Job(
-        job_title=job_title,
-        company=company,
-        location=location,
-        salary_in_usd=int(salary),
-        remote=bool(remote))
-    
-    session.add(new_job)
-    session.commit()
+    try:
+        if remote == "True" or remote == "False":
+            if remote == "True":
+                remote = 1
+            if remote == "False":
+                remote = 0
+            new_job = Job(
+                job_title=job_title,
+                company=company,
+                location=location,
+                salary_in_usd=int(salary),
+                remote=bool(remote))
+            session.add(new_job)
+            session.commit()
+            print('Job has been added to the database')
+        else:
+            print('Remote must be True or False')
+    except ValueError:
+        print('Salary must be an integer value')
+
 
 def edit_job_in_db(session):
     job_id = input("Enter the ID of the job you want to edit: ")
@@ -75,19 +86,32 @@ def edit_job_in_db(session):
         location = input("Enter the updated Location: ").title()
         salary = input("Enter the updated Salary: ")
         remote = input("Enter the updated Remote (True/False): ").title()
-        job.job_title = job_title
-        job.company = company
-        job.location = location
-        job.salary_in_usd = int(salary)
-        job.remote = bool(remote)
 
-        session.commit()
-        print("Row updated successfully.")
+        try:
+            if remote == "True" or remote == "False":
+                if remote == "True":
+                    remote = 1
+                if remote == "False":
+                    remote = 0
+                job.job_title = job_title
+                job.company = company
+                job.location = location
+                job.salary_in_usd = int(salary)
+                job.remote = bool(remote)
+
+                session.commit()
+                print("Row updated successfully.")
+            else:
+                print('Remote must be True or False')
+        except ValueError:
+            print('Salary must be an integer value')
+
     else:
         print("Row not found.")
 
 def delete_job_from_db(session):
     job_id = input("Enter the ID of the job you want to remove: \n")
+    print(type(job_id))
     job = session.query(Job).get(job_id)
     if job:
         session.delete(job)
@@ -110,6 +134,7 @@ def show_users_table(session):
 
 def delete_user_from_db(session):
     user_id = input("Enter the ID of the user you want to remove: \n")
+
     user = session.query(User).get(user_id)
     if user:
         session.delete(user)

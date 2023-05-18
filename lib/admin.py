@@ -1,6 +1,7 @@
 from db.models import Job, User, Application
 from prettytable import PrettyTable
 from helpers import validate_user, main_menu, create_user_application_table
+from rich import print
 
 def run_admin(session):
     while True:

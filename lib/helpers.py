@@ -1,6 +1,19 @@
 from db.models import Job, User, Application
 from prettytable import PrettyTable
 from sqlalchemy import func
+from rich import print, box
+from rich.table import Table
+from rich.console import Console
+from rich.style import Style
+from rich.theme import Theme
+
+custom_theme = Theme({
+    "menu": "light_goldenrod2",
+    "error": "bold red3",
+    "success": "light_green",
+})
+
+c = Console(theme=custom_theme)
 
 def validate_user(session):
     while True:
@@ -9,7 +22,7 @@ def validate_user(session):
             print("Let's add you to the database!")
             first_name, last_name = enter_name()
             new_user = add_new_user(session, first_name, last_name)
-            print("You're in the system! Here is your info:")
+            c.print("You're in the system! Here is your info:", style="success")
             return new_user
         elif (new_user.lower() == ('n')):
             print("Let's find you in the database!")
@@ -17,18 +30,18 @@ def validate_user(session):
             id = input("What's your user id? \n")
             existing_user = find_user_by_id(session, id)
             if existing_user and existing_user.first_name == first_name and existing_user.last_name == last_name:
-                print('Welcome back!')
+                c.print('Welcome back!', style="success")
                 return existing_user
             else:
-                print("Ummm, I can't seem to find you!")
+                c.print("Ummm, I can't seem to find you!", style="error")
         elif new_user.lower() == "admin":
             #all admin functions are in admin.py
-            print("Welcome, Admin!")
+            c.print("Welcome, Admin!", style="success")
             run_admin(session)
         elif new_user.lower() == "quit":
             quit()
         else:
-            print('--Invalid response--')
+            c.print('--Invalid response--', style="error")
 
 def main_menu(session, validated_user):
     while True:
@@ -38,7 +51,7 @@ def main_menu(session, validated_user):
               + f'C. update an existing job application status \n' \
               + f'D. delete an existing job application \n' \
               + f'E. exit the program'
-        print(menu)
+        c.print(menu, style="menu")
         choice = menu_choice()
         if choice:
             done_processing = process_choice(session, choice, validated_user)
@@ -69,17 +82,40 @@ def add_new_user(session, first_name, last_name):
     session.commit()
     return find_user_by_id(session, n_user.user_id)
 
+# def create_user_application_table(user):
+#     application_table = PrettyTable()
+#     application_table.field_names = ["application id", "job title", "company", "location", "salary($)", "remote", "application status"]
+#     if isinstance(user, User):
+#         rows = []
+#         for app in user.applications:
+#             if app.active:
+#                 job = app.job
+#                 app_record = [app.application_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote, app.status]
+#                 rows.append(app_record)
+#         application_table.add_rows(rows)
+#         return application_table
+#     else:
+#         return None
+
 def create_user_application_table(user):
-    application_table = PrettyTable()
-    application_table.field_names = ["application id", "job title", "company", "location", "salary($)", "remote", "application status"]
+    application_table = Table(
+        title=f"{user.first_name}'s applications",
+        title_style="bold red",
+        box=box.SQUARE_DOUBLE_HEAD)
+
+    application_table.add_column("application id", justify="center", style="bold red3")
+    application_table.add_column("job title", justify="center", style="sky_blue1")
+    application_table.add_column("company", justify="center", style="sky_blue1")
+    application_table.add_column("location", justify="center", style="sky_blue1")
+    application_table.add_column("salary($)", justify="center", style="bold red3")
+    application_table.add_column("remote", justify="center", style="sky_blue1")
+    application_table.add_column("application status", justify="center", style="light_green")
+
     if isinstance(user, User):
-        rows = []
         for app in user.applications:
             if app.active:
                 job = app.job
-                app_record = [app.application_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote, app.status]
-                rows.append(app_record)
-        application_table.add_rows(rows)
+                application_table.add_row(str(app.application_id), job.job_title, job.company, job.location, str(job.salary_in_usd), str(job.remote), app.status)
         return application_table
     else:
         return None
@@ -106,7 +142,7 @@ def process_choice(session, choice, user):
         app_id = check_app_id(user)
         update_application_status(session, app_id)
         print(create_user_application_table(user))
-        
+
     if choice == "d":
         handle_remove_application(session, user)
         print(create_user_application_table(user))

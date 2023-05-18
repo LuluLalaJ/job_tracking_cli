@@ -1,4 +1,6 @@
 from db.models import Application
+from rich import print
+
 
 APPLICATION_STATUS = [
     "to be submitted",

@@ -4,7 +4,7 @@ from helpers import create_user_application_table, c
 
 
 def handle_application_sorting(user):
-    print('How would you like to sort your applications?')
+    c.print('How would you like to sort your applications?', style="prompt")
     menu = f'A. by job title \n' \
         + f'B. by company \n' \
         + f'C. by location \n' \
@@ -22,7 +22,7 @@ def handle_application_sorting(user):
 
 def sorting_choice():
     while True:
-        print('Please choose a sorting method: A, B, C, D, E, F, G, or H')
+        c.print('Please choose a sorting method: A, B, C, D, E, F, G, or H', style="prompt")
         sorting_choice = input().lower()
         if sorting_choice == "h":
             quit()
@@ -37,20 +37,20 @@ def sorting_choice():
 def process_sorting(sorting, user):
     table = create_user_application_table(user)
     if sorting == "a":
-        print("Filtering by: job title")
+        c.print("Filtering by: job title", style="success")
         print(table.get_string(sortby="job title"))
     if sorting == "b":
-        print("Filtering by: company")
+        c.print("Filtering by: company", style="success")
         print(table.get_string(sortby="company"))
     if sorting == "c":
-        print("Filtering by: location")
+        c.print("Filtering by: location", style="success")
         print(table.get_string(sortby="location"))
     if sorting == "d":
-        print("Filtering by: salary")
+        c.print("Filtering by: salary", style="success")
         print(table.get_string(sortby="salary($)"))
     if sorting == "e":
-        print("Filtering by: remote")
+        c.print("Filtering by: remote", style="success")
         print(table.get_string(sortby="remote"))
     if sorting == "f":
-        print("Filtering by: application status")
+        c.print("Filtering by: application status", style="success")
         print(table.get_string(sortby="application status"))

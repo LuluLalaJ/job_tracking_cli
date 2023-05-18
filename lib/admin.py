@@ -4,7 +4,6 @@ from helpers import validate_user, main_menu, create_user_application_table, c
 
 from rich import print
 
-
 def run_admin(session):
     while True:
         menu = f'A. view all jobs \n' \
@@ -54,77 +53,85 @@ def show_job_table(session):
     print(job_table)
 
 def add_job_to_db(session):
-    job_title = input("Job Title: ").title()
-    company = input("Company: ").title()
-    location = input("Location: ").title()
-    salary = input("Salary: ")
-    remote = input("Remote (True/False): ").title()
-    try:
-        if remote == "True" or remote == "False":
-            if remote == "True":
-                remote = 1
-            if remote == "False":
-                remote = 0
-            new_job = Job(
-                job_title=job_title,
-                company=company,
-                location=location,
-                salary_in_usd=int(salary),
-                remote=bool(remote))
-            session.add(new_job)
-            session.commit()
-            c.print('Job has been added to the database', style="success")
-        else:
-            c.print('Remote must be True or False', style="error")
-    except ValueError:
-        print('Salary must be an integer value', style="error")
+    c.print("Job Title: ", end='', style="prompt")
+    job_title = input().title()
+    c.print("Company: ", end='', style="prompt")
+    company = input().title()
+    c.print("Location: ", end='', style="prompt")
+    location = input().title()
+    c.print("Salary: ", end='', style="prompt")
+    salary = input()
+    c.print("Remote (True/False): ", end='', style="prompt")
+    remote = input().title()
 
+    valid_salary = validate_salary(salary, session)
+    valid_remote = validate_remote(remote, session)
+
+    new_job = Job(
+        job_title=job_title,
+        company=company,
+        location=location,
+        salary_in_usd=valid_salary,
+        remote=valid_remote)
+    session.add(new_job)
+    session.commit()
+    c.print('Job has been added to the database', style="success")
 
 def edit_job_in_db(session):
-    job_id = input("Enter the ID of the job you want to edit: \n")
+    c.print("Enter the ID of the job you want to edit: ", style="prompt")
+    job_id = input()
     job = session.query(Job).filter_by(job_id=job_id).first()
     if job:
-        job_title = input("Enter the updated Job Title: ").title()
-        company = input("Enter the updated Company: ").title()
-        location = input("Enter the updated Location: ").title()
-        salary = input("Enter the updated Salary: ")
-        remote = input("Enter the updated Remote (True/False): ").title()
-        try:
-            if remote == "True":
-                remote = 1
-            elif remote == "False":
-                remote = 0
-            else:
-                c.print("Remote must be 'True' or 'False'", style="error")
-                return
-            bool(remote)
-        except ValueError:
-            c.print("Remote must be 'True' or 'False'", style="error")
-            return
+        c.print("Enter the updated Job Title: ", end='', style="prompt")
+        job_title = input().title()
+        c.print("Enter the updated Company: ", end='', style="prompt")
+        company = input().title()
+        c.print("Enter the updated Location: ", end='', style="prompt")
+        location = input().title()
+        c.print("Enter the updated Salary: ", end='', style="prompt")
+        salary = input()
+        c.print("Enter the updated Remote (True/False): ", end='', style="prompt")
+        remote = input().title()
+        
+        valid_salary = validate_salary(salary, session)
+        valid_remote = validate_remote(remote, session)
+        
+        job.job_title = job_title
+        job.company = company
+        job.location = location
+        job.salary_in_usd = valid_salary
+        job.remote = valid_remote
 
-        try:
-            valid_salary = int(salary)
-        except ValueError:
-            c.print('Salary must be an integer value', style="error")
-            return
-
-        if valid_salary <= 0:
-            c.print("Salary must be a positive integer.", style="error")
-            return
-        else:
-            job.job_title = job_title
-            job.company = company
-            job.location = location
-            job.salary_in_usd = valid_salary
-            job.remote = bool(remote)
-
-            session.commit()
-            c.print("Row updated successfully.", style="success")
+        session.commit()
+        c.print("Row updated successfully.", style="success")
     else:
         c.print("Row not found.", style="error")
 
+def validate_salary(value, session):
+    try:
+        value = int(value)
+    except ValueError:
+        c.print('Salary must be an integer.', style="error")
+        run_admin(session)
+    if value <= 0:
+        c.print("Salary must be a positive integer.", style="error")
+        run_admin(session)
+    else:
+        return value
+
+def validate_remote(value, session):
+    if value == "True":
+        value = 1
+    elif value == "False":
+        value = 0
+    else:
+        c.print("Remote must be 'True' or 'False'", style="error")
+        run_admin(session)
+    return bool(value)
+
 def delete_job_from_db(session):
-    job_id = input("Enter the ID of the job you want to remove: \n")
+    c.print("Enter the ID of the job you want to remove:", style="prompt")
+    job_id = input()
     job = session.query(Job).get(job_id)
     if job:
         session.delete(job)
@@ -146,7 +153,8 @@ def show_users_table(session):
     print(users_table)
 
 def delete_user_from_db(session):
-    user_id = input("Enter the ID of the user you want to remove: \n")
+    c.print("Enter the ID of the user you want to remove:", style="prompt")
+    user_id = input()
 
     user = session.query(User).get(user_id)
     if user:
@@ -154,4 +162,4 @@ def delete_user_from_db(session):
         session.commit()
         c.print("User removed successfully.", style="success")
     else:
-        c.print("Item not found.", style="success")
+        c.print("Item not found.", style="error")

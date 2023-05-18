@@ -13,7 +13,7 @@ def run_admin(session):
             + f'E. view all users \n' \
             + f'F. remove a user from the database \n' \
             + f'G. exit to main menu'
-        print('What would you like to do?')
+        c.print('What would you like to do?', style="prompt")
         c.print(menu, style="menu")
         admin_choice(session)
 

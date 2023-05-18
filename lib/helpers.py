@@ -16,16 +16,16 @@ c = Console(theme=custom_theme)
 
 def validate_user(session):
     while True:
-        c.print("Are you a new user? Y/N; (Type [red]'quit'[/red] to exit)")
+        c.print("Are you a new user? Y/N; (Type [red]'quit'[/red] to exit)", style="menu")
         new_user = input().lower()
         if (new_user == 'y'):
-            c.print("Let's add you to the database!", style="prompt")
+            c.print("Let's add you to the database!", style="success")
             first_name, last_name = enter_name()
             new_user = add_new_user(session, first_name, last_name)
             c.print("You're in the system! Here is your info:", style="success")
             return new_user
         elif (new_user == ('n')):
-            c.print("Let's find you in the database!", style="prompt")
+            c.print("Let's find you in the database!", style="success")
             first_name, last_name = enter_name()
             c.print("What's your user id?", style="prompt")
             id = input()
@@ -39,7 +39,7 @@ def validate_user(session):
             #all admin functions are in admin.py
             c.print("Welcome, Admin!", style="success")
             run_admin(session)
-        elif new_user.lower() == "quit":
+        elif new_user == "quit" or new_user == "q":
             quit()
         else:
             c.print('--Invalid response--', style="error")

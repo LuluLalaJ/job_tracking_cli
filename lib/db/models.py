@@ -22,7 +22,7 @@ class Job(Base):
     salary_in_usd = Column(Integer())
     remote = Column(Boolean())
 
-    applications = relationship('Application', back_populates="job")
+    applications = relationship('Application', back_populates="job", cascade="all, delete-orphan")
     users = association_proxy('applications', 'user', creator=lambda user: Application(user=user))
 
     def __repr__(self):
@@ -36,7 +36,7 @@ class User(Base):
     first_name = Column(String())
     last_name = Column(String())
 
-    applications = relationship('Application', back_populates="user")
+    applications = relationship('Application', back_populates="user", cascade="all, delete-orphan")
     jobs = association_proxy('applications', 'job', creator=lambda job: Application(job=job))
 
     def __repr__(self):

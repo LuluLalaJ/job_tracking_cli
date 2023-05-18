@@ -1,6 +1,7 @@
 from db.models import Application
 from rich import print
-
+from helpers import c
+from rich import print
 
 APPLICATION_STATUS = [
     "to be submitted",
@@ -28,17 +29,18 @@ def update_application_status(session, app_id):
                     'status': APPLICATION_STATUS[new_status-1]
                 })
                 session.commit()
-                print('The application status is updated!')
+                c.print('The application status is updated!', style="success")
                 break
             else:
-                print('Invalid input. Please enter an interger between 1 and 8.')
+                c.print('Invalid input. Please enter an interger between 1 and 8.', style="error")
         except ValueError:
-            print('Invalid input. Please enter an integer value.')
+            c.print('Invalid input. Please enter an integer value.', style="error")
 
 def print_app_status_menu():
+    print('Valid status options:')
     i = 1
     for status in APPLICATION_STATUS:
-        print(f'{i}. {status.capitalize()}')
+        c.print(f'{i}. {status.title()}', style="menu")
         i += 1
-    print(f'{i}. No change! Go back to the main menu')
-    print(f'{i+1}. Exist the program')
+    c.print(f'{i}. No change! Go back to the main menu', style="menu")
+    c.print(f'{i+1}. Exit the program', style="menu")

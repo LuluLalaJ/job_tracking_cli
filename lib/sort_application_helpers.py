@@ -1,10 +1,11 @@
 from helpers import create_user_application_table
 from rich import print
+from helpers import create_user_application_table, c
 
 
 def handle_application_sorting(user):
-    menu = f'How would you like to sort your applications? \n' \
-        + f'A. by job title \n' \
+    print('How would you like to sort your applications?')
+    menu = f'A. by job title \n' \
         + f'B. by company \n' \
         + f'C. by location \n' \
         + f'D. by salary \n' \
@@ -13,7 +14,7 @@ def handle_application_sorting(user):
         + f'G. go back to the main menu \n' \
         + f'H. quit the program\n' \
 
-    print(menu)
+    c.print(menu, style="menu")
     sorting = sorting_choice()
     if sorting == "go back to the main menu":
         return
@@ -30,7 +31,7 @@ def sorting_choice():
         if sorting_choice in ["a", "b", "c", "d", "e", "f"]:
             return sorting_choice
         else:
-            print('--Invalid response--')
+            c.print('--Invalid response--', style="error")
             continue
 
 def process_sorting(sorting, user):

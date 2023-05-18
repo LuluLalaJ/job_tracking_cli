@@ -1,10 +1,8 @@
 from db.models import Job, Application
 from prettytable import PrettyTable
 from sqlalchemy import func
-from helpers import create_user_application_table
+from helpers import create_user_application_table, c
 from rich import print
-from rich.table import Table
-
 
 def filter_jobs_add_applications(session, user):
     while True:
@@ -30,14 +28,14 @@ def print_job_table(jobs):
         rows.append(job_record)
     job_table.add_rows(rows)
     if rows:
-        print('Here are all the available jobs!')
+        c.print('Here are all the available jobs!', style="success")
         print(job_table)
     else:
-        print("There are no jobs available in the database!")
+        c.print("There are no jobs available in the database!", style="error")
 
 def print_viewing_options():
-    viewing_options = f'How would you like to view the jobs in the database? \n' \
-        + f'A. see ALL the jobs\n' \
+    print("How would you like to view the jobs in the database?")
+    viewing_options = f'A. see ALL the jobs\n' \
         + f'B. see remote jobs\n' \
         + f'C. see on-site jobs\n' \
         + f'D. search jobs by salary\n' \
@@ -46,7 +44,7 @@ def print_viewing_options():
         + f'G. search jobs by company\n' \
         + f'H. return to the previous menu\n' \
         + f'I. quit the program'
-    print(viewing_options)
+    c.print(viewing_options, style="menu")
 
 def check_viewing_option():
     while True:
@@ -58,7 +56,7 @@ def check_viewing_option():
         elif viewing_option in ["a", "b", "c", "d", "e", "f", "g"]:
             return viewing_option
         else:
-            print('Invalid input. Please enter a valid letter.')
+            c.print('Invalid input. Please enter a valid letter.', style="error")
 
 def get_jobs_by_options(session, viewing_option):
     jobs = None
@@ -95,11 +93,11 @@ def check_job_id(user, jobs):
                 if job_id_exists and (job_id not in user_active_job_ids):
                     return job_id
                 if job_id_exists:
-                    print("You have already added this job app! Add something else!")
+                    c.print("You have already added this job app! Add something else!", style="error")
                 else:
-                    print('This is not one of the above jobs. pleaset try gain!')
+                    c.print('This is not one of the above jobs. pleaset try gain!', style="error")
             except ValueError:
-                print('Invalid input. Please enter an integer value.')
+                c.print('Invalid input. Please enter an integer value.', style="error")
 
 def add_new_application(session, user, job_id):
     new_app = Application(
@@ -110,7 +108,7 @@ def add_new_application(session, user, job_id):
     )
     session.add(new_app)
     session.commit()
-    print('The job is added to your application tracking file!')
+    c.print('The job is added to your application tracking file!', style="success")
 
 def check_salary():
     salary_min = input('Please enter the minimum salary you want: \n')
@@ -121,17 +119,19 @@ def check_salary():
         if 0 < salary_min < salary_max:
             return salary_min, salary_max
         else:
-            print('Error: salary must be a positive integer and min salary must be smaller than max salary')
+            c.print('Error: salary must be a positive integer and min salary must be smaller than max salary', style="error")
     except ValueError:
-        print("Error: Salary must be an integer.")
+        c.print("Error: Salary must be an integer.", style="error")
 
 def check_add_app():
-    answer = input('Do you want to: \n' \
-                + f'A. add a job application \n' \
-                + f'B. return to the previous menu \n').lower()
-    if answer == "a":
-        return True
-    if answer == "b":
-        return False
-    else:
-        print('--Invalid input!--')
+    while True:
+        print('Do you want to:')
+        c.print(f'A. add a job application \n' \
+                + f'B. return to the previous menu \n', style="menu")
+        answer = input().lower()
+        if answer == "a":
+            return True
+        if answer == "b":
+            return False
+        else:
+            c.print('--Invalid input!--', style="error")

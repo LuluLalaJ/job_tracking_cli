@@ -5,8 +5,6 @@ from sqlalchemy.orm import sessionmaker
 from helpers import (
     validate_user,
     create_user_application_table,
-    menu_choice,
-    process_choice,
     main_menu)
 
 if __name__ == '__main__':

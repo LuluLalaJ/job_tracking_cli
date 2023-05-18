@@ -3,8 +3,11 @@ from helpers import user_active_app_id
 
 def handle_remove_application(session, user):
     while True:
-        print("Please enter the id of the application that you wish to delete:")
-        application_id = input()
+        print("Please enter the id of the application that you wish to delete or\n")
+        print("'Q' to return to the previous menu:\n")
+        application_id = input().lower()
+        if application_id == "q":
+            return 
         try:
             application_id = int(application_id)
             app_id_exists = application_id in user_active_app_id(user)

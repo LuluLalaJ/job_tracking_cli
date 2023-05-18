@@ -99,7 +99,6 @@ def process_choice(session, choice, user):
     if choice == "a":
         filter_jobs_add_applications(session, user)
 
-
     if choice == "b":
         handle_application_sorting(user)
 
@@ -107,6 +106,7 @@ def process_choice(session, choice, user):
         app_id = check_app_id(user)
         update_application_status(session, app_id)
         print(create_user_application_table(user))
+        
     if choice == "d":
         handle_remove_application(session, user)
         print(create_user_application_table(user))

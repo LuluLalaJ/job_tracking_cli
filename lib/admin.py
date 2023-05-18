@@ -78,7 +78,7 @@ def add_job_to_db(session):
 
 
 def edit_job_in_db(session):
-    job_id = input("Enter the ID of the job you want to edit: ")
+    job_id = input("Enter the ID of the job you want to edit: \n")
     job = session.query(Job).filter_by(job_id=job_id).first()
     if job:
         job_title = input("Enter the updated Job Title: ").title()

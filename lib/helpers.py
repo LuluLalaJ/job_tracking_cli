@@ -4,7 +4,6 @@ from sqlalchemy import func
 from rich import print, box
 from rich.table import Table
 from rich.console import Console
-from rich.style import Style
 from rich.theme import Theme
 
 custom_theme = Theme({
@@ -45,8 +44,8 @@ def validate_user(session):
 
 def main_menu(session, validated_user):
     while True:
-        menu = f'You can: \n' \
-              + f'A. add a new job application \n' \
+        print('You can:')
+        menu = f'A. add a new job application \n' \
               + f'B. sort my applications \n' \
               + f'C. update an existing job application status \n' \
               + f'D. delete an existing job application \n' \
@@ -70,8 +69,8 @@ def enter_name():
         elif first_name == "quit" or last_name == "quit":
             quit()
         else:
-            print("Not a valid name. Please enter a string longer than 0 characters.")
-            continue
+            c.print("Not a valid name. Please enter a string longer than 0 characters.", style="error")
+
 
 def add_new_user(session, first_name, last_name):
     fn = first_name
@@ -82,43 +81,43 @@ def add_new_user(session, first_name, last_name):
     session.commit()
     return find_user_by_id(session, n_user.user_id)
 
-# def create_user_application_table(user):
-#     application_table = PrettyTable()
-#     application_table.field_names = ["application id", "job title", "company", "location", "salary($)", "remote", "application status"]
-#     if isinstance(user, User):
-#         rows = []
-#         for app in user.applications:
-#             if app.active:
-#                 job = app.job
-#                 app_record = [app.application_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote, app.status]
-#                 rows.append(app_record)
-#         application_table.add_rows(rows)
-#         return application_table
-#     else:
-#         return None
-
 def create_user_application_table(user):
-    application_table = Table(
-        title=f"{user.first_name}'s applications",
-        title_style="bold red",
-        box=box.SQUARE_DOUBLE_HEAD)
-
-    application_table.add_column("application id", justify="center", style="bold red3")
-    application_table.add_column("job title", justify="center", style="sky_blue1")
-    application_table.add_column("company", justify="center", style="sky_blue1")
-    application_table.add_column("location", justify="center", style="sky_blue1")
-    application_table.add_column("salary($)", justify="center", style="bold red3")
-    application_table.add_column("remote", justify="center", style="sky_blue1")
-    application_table.add_column("application status", justify="center", style="light_green")
-
+    application_table = PrettyTable()
+    application_table.field_names = ["application id", "job title", "company", "location", "salary($)", "remote", "application status"]
     if isinstance(user, User):
+        rows = []
         for app in user.applications:
             if app.active:
                 job = app.job
-                application_table.add_row(str(app.application_id), job.job_title, job.company, job.location, str(job.salary_in_usd), str(job.remote), app.status)
+                app_record = [app.application_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote, app.status]
+                rows.append(app_record)
+        application_table.add_rows(rows)
         return application_table
     else:
         return None
+
+# def create_user_application_table(user):
+#     application_table = Table(
+#         title=f"{user.first_name}'s applications",
+#         title_style="bold red",
+#         box=box.SQUARE_DOUBLE_HEAD)
+
+#     application_table.add_column("application id", justify="center", style="bold red3")
+#     application_table.add_column("job title", justify="center", style="sky_blue1")
+#     application_table.add_column("company", justify="center", style="sky_blue1")
+#     application_table.add_column("location", justify="center", style="sky_blue1")
+#     application_table.add_column("salary($)", justify="center", style="bold red3")
+#     application_table.add_column("remote", justify="center", style="sky_blue1")
+#     application_table.add_column("application status", justify="center", style="light_green")
+
+#     if isinstance(user, User):
+#         for app in user.applications:
+#             if app.active:
+#                 job = app.job
+#                 application_table.add_row(str(app.application_id), job.job_title, job.company, job.location, str(job.salary_in_usd), str(job.remote), app.status)
+#         return application_table
+#     else:
+#         return None
 
 def menu_choice():
     print('Please enter your choice: A, B, C, D, or E')
@@ -128,7 +127,7 @@ def menu_choice():
     if choice in ["a", "b", "c", "d"]:
         return choice
     else:
-        print('--Invalid response--')
+        c.print('--Invalid response--', style="error")
         return None
 
 def process_choice(session, choice, user):
@@ -156,15 +155,13 @@ def check_app_id(user):
                 if app_id_exists:
                     return app_id
                 else:
-                    print('App ID does not exist in DB. pleaset try gain!')
+                    c.print('App ID does not exist in DB. pleaset try gain!', style="error")
             except ValueError:
-                print('Invalid input. Please enter an integer value.')
+                c.print('Invalid input. Please enter an integer value.', style="error")
 
 def user_active_app_id(user):
     applications = user.applications
     return [app.application_id for app in applications]
-
-
 
 from add_application_helpers import filter_jobs_add_applications
 from sort_application_helpers import handle_application_sorting

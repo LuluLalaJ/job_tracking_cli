@@ -1,6 +1,8 @@
 from db.models import Application
 from helpers import user_active_app_id
 from rich import print
+from helpers import c
+from rich import print
 
 
 def handle_remove_application(session, user):
@@ -17,10 +19,10 @@ def handle_remove_application(session, user):
                 deactivate_application(session, application_id)
                 break
             else:
-                print("Error: Application ID must be valid ID number.")
+                c.print("Error: Application ID must be valid ID number.", style="error")
                 continue
         except ValueError:
-            print("Error: ID must be an integer.")
+            c.print("Error: ID must be an integer.", style="error")
 
 def deactivate_application(session, app_id):
     app = session.query(Application).filter(Application.application_id == app_id)
@@ -28,4 +30,4 @@ def deactivate_application(session, app_id):
         'active': False
     })
     session.commit()
-    print('The application is deleted!')
+    c.print('The application is deleted!', style="success")

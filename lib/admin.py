@@ -1,23 +1,26 @@
 from db.models import Job, User, Application
 from prettytable import PrettyTable
-from helpers import validate_user, main_menu, create_user_application_table
+from helpers import validate_user, main_menu, create_user_application_table, c
+
 from rich import print
+
 
 def run_admin(session):
     while True:
-        menu = f'What would you like to do? \n' \
-              + f'A. view all jobs \n' \
-              + f'B. add a new job \n' \
-              + f'C. edit an existing job \n' \
-              + f'D. remove a job from the database \n' \
-              + f'E. view all users \n' \
-              + f'F. remove a user from the database \n' \
-              + f'G. exit to main menu'
-        print(menu)
+        menu = f'A. view all jobs \n' \
+            + f'B. add a new job \n' \
+            + f'C. edit an existing job \n' \
+            + f'D. remove a job from the database \n' \
+            + f'E. view all users \n' \
+            + f'F. remove a user from the database \n' \
+            + f'G. exit to main menu'
+        print('What would you like to do?')
+        c.print(menu, style="menu")
         admin_choice(session)
 
 def admin_choice(session):
-    choice = input('Please enter your choice: A, B, C, D, E, F or G \n').lower()
+    c.print('Please enter your choice: A, B, C, D, E, F or G', style="prompt")
+    choice = input().lower()
     if choice == "a":
         show_job_table(session)
     elif choice == "b":
@@ -36,7 +39,7 @@ def admin_choice(session):
         print(create_user_application_table(validated_user))
         main_menu(session, validated_user)
     else:
-        print('--Invalid response--')
+        c.print('--Invalid response--', style="error")
 
 def show_job_table(session):
     job_table = PrettyTable()
@@ -47,7 +50,7 @@ def show_job_table(session):
             job_record = [job.job_id, job.job_title, job.company, job.location, job.salary_in_usd, job.remote]
             rows.append(job_record)
     job_table.add_rows(rows)
-    print('Here are all current jobs in the database:')
+    c.print('Here are all current jobs in the database:', style="success")
     print(job_table)
 
 def add_job_to_db(session):
@@ -56,7 +59,6 @@ def add_job_to_db(session):
     location = input("Location: ").title()
     salary = input("Salary: ")
     remote = input("Remote (True/False): ").title()
-
     try:
         if remote == "True" or remote == "False":
             if remote == "True":
@@ -71,11 +73,11 @@ def add_job_to_db(session):
                 remote=bool(remote))
             session.add(new_job)
             session.commit()
-            print('Job has been added to the database')
+            c.print('Job has been added to the database', style="success")
         else:
-            print('Remote must be True or False')
+            c.print('Remote must be True or False', style="error")
     except ValueError:
-        print('Salary must be an integer value')
+        print('Salary must be an integer value', style="error")
 
 
 def edit_job_in_db(session):
@@ -87,28 +89,27 @@ def edit_job_in_db(session):
         location = input("Enter the updated Location: ").title()
         salary = input("Enter the updated Salary: ")
         remote = input("Enter the updated Remote (True/False): ").title()
-
         try:
             if remote == "True":
                 remote = 1
             elif remote == "False":
                 remote = 0
             else:
-                print("Remote must be 'True' or 'False'")
+                c.print("Remote must be 'True' or 'False'", style="error")
                 return
             bool(remote)
         except ValueError:
-            print("Remote must be 'True' or 'False'")
+            c.print("Remote must be 'True' or 'False'", style="error")
             return
 
         try:
             valid_salary = int(salary)
         except ValueError:
-            print('Salary must be an integer value')
+            c.print('Salary must be an integer value', style="error")
             return
 
         if valid_salary <= 0:
-            print("Salary must be a positive integer.")
+            c.print("Salary must be a positive integer.", style="error")
             return
         else:
             job.job_title = job_title
@@ -118,21 +119,19 @@ def edit_job_in_db(session):
             job.remote = bool(remote)
 
             session.commit()
-            print("Row updated successfully.")
-                
+            c.print("Row updated successfully.", style="success")
     else:
-        print("Row not found.")
+        c.print("Row not found.", style="error")
 
 def delete_job_from_db(session):
     job_id = input("Enter the ID of the job you want to remove: \n")
-    print(type(job_id))
     job = session.query(Job).get(job_id)
     if job:
         session.delete(job)
         session.commit()
-        print("Job removed successfully.")
+        c.print("Job removed successfully.", style="success")
     else:
-        print("Item not found.")
+        c.print("Item not found.", style="error")
 
 def show_users_table(session):
     users_table = PrettyTable()
@@ -143,7 +142,7 @@ def show_users_table(session):
             user_record = [user.user_id, user.first_name , user.last_name]
             rows.append(user_record)
     users_table.add_rows(rows)
-    print('Here are all current users in the database:')
+    c.print('Here are all current users in the database:', style="success")
     print(users_table)
 
 def delete_user_from_db(session):
@@ -153,6 +152,6 @@ def delete_user_from_db(session):
     if user:
         session.delete(user)
         session.commit()
-        print("User removed successfully.")
+        c.print("User removed successfully.", style="success")
     else:
-        print("Item not found.")
+        c.print("Item not found.", style="success")

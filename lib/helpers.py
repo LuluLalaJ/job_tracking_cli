@@ -8,11 +8,11 @@ from rich.style import Style
 from rich.theme import Theme
 
 custom_theme = Theme({
-    "menu": "light_goldenrod2",
+    "menu": "cyan1",
     "error": "bold red3",
     "success": "light_green",
+    "prompt": "cornsilk1"
 })
-
 c = Console(theme=custom_theme)
 
 def validate_user(session):

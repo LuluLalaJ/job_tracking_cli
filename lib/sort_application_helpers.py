@@ -1,4 +1,6 @@
 from helpers import create_user_application_table
+from rich import print
+
 
 def handle_application_sorting(user):
     menu = f'How would you like to sort your applications? \n' \

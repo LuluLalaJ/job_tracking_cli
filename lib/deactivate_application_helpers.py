@@ -1,5 +1,7 @@
 from db.models import Application
 from helpers import user_active_app_id
+from rich import print
+
 
 def handle_remove_application(session, user):
     while True:
@@ -7,7 +9,7 @@ def handle_remove_application(session, user):
         print("'Q' to return to the previous menu:\n")
         application_id = input().lower()
         if application_id == "q":
-            return 
+            return
         try:
             application_id = int(application_id)
             app_id_exists = application_id in user_active_app_id(user)

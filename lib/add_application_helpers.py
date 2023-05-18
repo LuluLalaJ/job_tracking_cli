@@ -2,6 +2,9 @@ from db.models import Job, Application
 from prettytable import PrettyTable
 from sqlalchemy import func
 from helpers import create_user_application_table
+from rich import print
+from rich.table import Table
+
 
 def filter_jobs_add_applications(session, user):
     while True:

@@ -7,13 +7,19 @@ from helpers import (
     create_user_application_table,
     main_menu)
 
+from rich import print
+from rich.padding import Padding
+
+
+
 if __name__ == '__main__':
     engine = create_engine("sqlite:///db/jobtracking.db")
     Session = sessionmaker()
     Session.configure(bind=engine)
     session = Session()
 
-    print('Welcome to job application tracker!')
+    welcome = Padding("===== WELCOME TO THE APPLICATION TRACKING CENTER ====", (2), style="dark_sea_green1")
+    print(welcome)
 
     validated_user = validate_user(session)
     print(validated_user)

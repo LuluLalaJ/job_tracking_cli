@@ -115,7 +115,7 @@ def process_choice(session, choice, user):
         filter_jobs_add_applications(session, user)
 
     if choice == "b":
-        handle_application_sorting(user)
+        handle_application_sorting(user, session)
 
     if choice == "c":
         app_id = check_app_id(user)

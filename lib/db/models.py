@@ -10,12 +10,8 @@ convention = {
 }
 metadata = MetaData(naming_convention=convention)
 Base = declarative_base(metadata=metadata)
+# engine = create_engine('sqlite:///jobtracking.db')
 
-#do I need this here???
-engine = create_engine('sqlite:///jobtracking.db')
-
-#This is just a practice
-#Think about how you can be more specific about the data types/constraints/etc. for each column
 class Job(Base):
     __tablename__ = "jobs"
 
@@ -26,13 +22,12 @@ class Job(Base):
     salary_in_usd = Column(Integer())
     remote = Column(Boolean())
 
-    #still trying to understand back-populate & association_proxy
     applications = relationship('Application', back_populates="job")
     users = association_proxy('applications', 'user', creator=lambda user: Application(user=user))
 
     def __repr__(self):
-        #edit the repr later if necessary
         return f'<Job: {self.job_title}; Company: {self.company}; Location: {self.location}; Salary: ${self.salary_in_usd}>'
+
 
 class User(Base):
     __tablename__ = "users"
@@ -41,21 +36,17 @@ class User(Base):
     first_name = Column(String())
     last_name = Column(String())
 
-    #still trying to understand back-populate & association_proxy
     applications = relationship('Application', back_populates="user")
     jobs = association_proxy('applications', 'job', creator=lambda job: Application(job=job))
 
     def __repr__(self):
         return f'<User: {self.first_name} {self.last_name} | user_id: {self.user_id}>'
 
+
 class Application(Base):
     __tablename__ = "applications"
 
     application_id = Column(Integer(), primary_key=True)
-    #https://learning.flatironschool.com/courses/6329/assignments/239678?module_item_id=563727
-    #with dynamic default values like func.now(), one has to clear the data in the database before running new migration
-
-    #maybe need to change this for testing? since seeding creates the same time stamps!
     created_at = Column(DateTime(), server_default=func.now())
     updated_at = Column(DateTime(), onupdate=func.now())
     status = Column(String())
@@ -64,10 +55,8 @@ class Application(Base):
     job_id = Column(Integer(), ForeignKey("jobs.job_id"))
     user_id = Column(Integer(), ForeignKey("users.user_id"))
 
-    #create relationships
-    #Many-to-Many with an Association Object
     job = relationship('Job', back_populates='applications')
     user = relationship('User', back_populates='applications')
 
     def __repr__(self):
-        return f'<Application: {self.job.job_title}; Status: {self.status}>'
+        return f'<Application for: {self.job.job_title}; Application Id: {self.application_id}; Status: {self.status}>'

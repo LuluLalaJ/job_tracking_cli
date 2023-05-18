@@ -1,4 +1,3 @@
-
 from db.models import Job, User, Application
 from prettytable import PrettyTable
 from sqlalchemy import func

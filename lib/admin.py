@@ -75,7 +75,9 @@ def add_job_to_db(session):
         remote=valid_remote)
     session.add(new_job)
     session.commit()
-    c.print('Job has been added to the database!', style="success")
+
+    c.print('Job has been added to the database', style="success")
+    # ADD A PRINTING TABLE OF THE NEWLY ADDED JOB INFORMATION #
 
 def edit_job_in_db(session):
     c.print("Enter the ID of the job you want to edit: ", style="prompt")
@@ -92,10 +94,10 @@ def edit_job_in_db(session):
         salary = input()
         c.print("Enter the updated Remote (True/False): ", end='', style="prompt")
         remote = input().title()
-        
+
         valid_salary = validate_salary(salary, session)
         valid_remote = validate_remote(remote, session)
-        
+
         job.job_title = job_title
         job.company = company
         job.location = location
@@ -103,7 +105,9 @@ def edit_job_in_db(session):
         job.remote = valid_remote
 
         session.commit()
-        c.print("Job updated successfully!", style="success")
+
+        c.print("Row updated successfully.", style="success")
+        # ADD A PRINTING TABLE OF THE NEWLY EDITED JOB INFORMATION #
     else:
         c.print("Job ID not found.", style="error")
 

@@ -1,16 +1,12 @@
 from db.models import Application
-from helpers import user_active_app_id
+from helpers import user_active_app_id, c
 from rich import print
-from helpers import c
-from rich import print
-
 
 def handle_remove_application(session, user):
     while True:
-        print("Please enter the id of the application that you wish to delete or\n")
-        print("'Q' to return to the previous menu:\n")
+        c.print("Enter the id of the application you wish to delete or [red]'Q'[/red] to return to last menu", style="prompt")
         application_id = input().lower()
-        if application_id == "q":
+        if application_id == "q" or application_id == "quit":
             return
         try:
             application_id = int(application_id)

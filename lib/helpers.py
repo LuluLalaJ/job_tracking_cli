@@ -16,13 +16,13 @@ def validate_user(session):
     while True:
         c.print("Are you a new user? Y/N; (Type [red]'quit'[/red] to exit)", style="menu")
         new_user = input().lower()
-        if (new_user == 'y'):
+        if new_user == 'y' or new_user == 'yes':
             c.print("Let's add you to the database!", style="success")
             first_name, last_name = enter_name()
             new_user = add_new_user(session, first_name, last_name)
             c.print("You're in the system! Here is your info:", style="success")
             return new_user
-        elif (new_user == ('n')):
+        elif new_user == 'n' or new_user == 'no':
             c.print("Let's find you in the database!", style="success")
             first_name, last_name = enter_name()
             c.print("What's your user id?", style="prompt")
@@ -40,7 +40,7 @@ def validate_user(session):
         elif new_user == "quit" or new_user == "q":
             quit()
         else:
-            c.print('--Invalid response--', style="error")
+            c.print('Invalid option. Please select Y or N.', style="error")
 
 def main_menu(session, validated_user):
     while True:

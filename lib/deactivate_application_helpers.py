@@ -1,5 +1,3 @@
-from db.models import Application
-from helpers import user_active_app_id, c
 
 def handle_remove_application(session, user):
     while True:
@@ -26,3 +24,8 @@ def deactivate_application(session, app_id):
     })
     session.commit()
     c.print('The application is deleted!', style="success")
+
+
+from db.models import Application
+from helpers import c
+from update_application_helpers import user_active_app_id

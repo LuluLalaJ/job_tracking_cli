@@ -116,9 +116,7 @@ def process_choice(session, choice, user):
         handle_application_sorting(user, session)
 
     if choice == "c":
-        app_id = check_app_id(user)
-        if app_id == 0:
-            return 
+        app_id = check_app_id(user, session)
         update_application_status(session, app_id)
         print(create_user_application_table(user))
 
@@ -126,26 +124,9 @@ def process_choice(session, choice, user):
         handle_remove_application(session, user)
         print(create_user_application_table(user))
 
-def check_app_id(user):
-    while True:
-            c.print('Enter your app id or press "0" to return to the previous menu:', style="prompt")
-            app_id = input()
-            try:
-                app_id = int(app_id)
-                app_id_exists = app_id in user_active_app_id(user)
-                if app_id_exists or app_id == 0:
-                    return app_id
-                else:
-                    c.print('App ID does not exist in DB. pleaset try gain!', style="error")
-            except ValueError:
-                c.print('Invalid input. Please enter an integer value.', style="error")
-
-def user_active_app_id(user):
-    applications = user.applications
-    return [app.application_id for app in applications]
 
 from add_application_helpers import filter_jobs_add_applications
 from sort_application_helpers import handle_application_sorting
-from update_application_helpers import update_application_status
+from update_application_helpers import update_application_status, check_app_id
 from deactivate_application_helpers import handle_remove_application
 from admin import run_admin

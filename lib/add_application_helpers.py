@@ -1,16 +1,12 @@
 from db.models import Job, Application
 from prettytable import PrettyTable
-from sqlalchemy import func
-from helpers import create_user_application_table, c
+from helpers import create_user_application_table, main_menu, c
 from rich import print
 
 def filter_jobs_add_applications(session, user):
     while True:
         print_viewing_options()
-        viewing_option = check_viewing_option()
-        if viewing_option == "go back to previous menu":
-            return
-        jobs = get_jobs_by_options(session, viewing_option)
+        jobs = get_jobs_by_options(session, user)
         print_job_table(jobs)
         add_app = check_add_app()
         if add_app:
@@ -46,21 +42,9 @@ def print_viewing_options():
         + f'I. quit the program'
     c.print(viewing_options, style="menu")
 
-def check_viewing_option():
-    while True:
-        c.print('Enter your choice:', style="prompt")
-        viewing_option = input().lower()
-        if viewing_option == "h":
-            return "go back to previous menu"
-        elif viewing_option == "i":
-            quit()
-        elif viewing_option in ["a", "b", "c", "d", "e", "f", "g"]:
-            return viewing_option
-        else:
-            c.print('Invalid input. Please enter a valid letter.', style="error")
-
-def get_jobs_by_options(session, viewing_option):
-    jobs = None
+def get_jobs_by_options(session, user):
+    c.print('Enter your choice:', style="prompt")
+    viewing_option = input().lower()
     if viewing_option == "a":
         jobs = session.query(Job).all()
     elif viewing_option == "b":
@@ -82,11 +66,18 @@ def get_jobs_by_options(session, viewing_option):
         c.print("Search by company:", style="prompt")
         company = input()
         jobs = session.query(Job).filter(Job.company.ilike(f'%{company}%')).all()
+    elif viewing_option == "h":
+        main_menu(session, user)
+    elif viewing_option == "i":
+        quit()
+    else:
+        c.print('Invalid input. Please enter a valid letter.', style="error")
+        filter_jobs_add_applications(session, user)
     return jobs
 
 def check_job_id(user, jobs):
     while True:
-        c.print("Enter your job id or 'Q' to return to the previous menu:", style="prompt")
+        c.print("Enter your job id or [red]'Q'[/red] to return to the previous menu:", style="prompt")
         job_id = input().lower()
         if job_id == "q":
             return
@@ -100,7 +91,7 @@ def check_job_id(user, jobs):
                 if job_id_exists:
                     c.print("You have already added this job app! Add something else!", style="error")
                 else:
-                    c.print('This is not one of the above jobs. pleaset try gain!', style="error")
+                    c.print('This is not one of the above jobs. Please try again!', style="error")
             except ValueError:
                 c.print('Invalid input. Please enter an integer value.', style="error")
 
@@ -138,7 +129,9 @@ def check_add_app():
         answer = input().lower()
         if answer == "a":
             return True
-        if answer == "b":
+        elif answer == "b":
             return False
+        elif answer == "q":
+            return
         else:
-            c.print('--Invalid input!--', style="error")
+            c.print('Error: Please select A or B. Enter Q to return to previous menu', style="error")

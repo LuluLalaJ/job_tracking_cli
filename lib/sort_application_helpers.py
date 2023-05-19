@@ -42,4 +42,4 @@ def process_sorting(user, session):
     elif sorting == "h":
         quit()
     else:
-        c.print('--Invalid response--', style="error")
+        c.print('Invalid input. Please enter a valid letter.', style="error")

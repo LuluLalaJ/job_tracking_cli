@@ -12,12 +12,12 @@ from rich.padding import Padding
 
 
 if __name__ == '__main__':
-    engine = create_engine("sqlite:///db/jobtracking.db")
+    engine = create_engine("sqlite:///lib/db/jobtracking.db")
     Session = sessionmaker()
     Session.configure(bind=engine)
     session = Session()
 
-    welcome = Padding("===== WELCOME TO THE APPLICATION TRACKING CENTER ====", (2), style="dark_sea_green1")
+    welcome = Padding("===== WELCOME TO THE APPLICATION TRACKING CENTER ====", (4), style="dark_sea_green1")
     print(welcome)
 
     validated_user = validate_user(session)

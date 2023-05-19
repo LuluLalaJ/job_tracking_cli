@@ -1,5 +1,4 @@
 from db.models import Application
-from rich import print
 from helpers import c
 
 APPLICATION_STATUS = [

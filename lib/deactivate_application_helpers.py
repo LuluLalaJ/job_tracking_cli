@@ -1,6 +1,5 @@
 from db.models import Application
 from helpers import user_active_app_id, c
-from rich import print
 
 def handle_remove_application(session, user):
     while True:

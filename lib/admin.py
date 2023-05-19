@@ -1,4 +1,4 @@
-from db.models import Job, User, Application
+from db.models import Job, User
 from prettytable import PrettyTable
 from helpers import validate_user, main_menu, create_user_application_table, c
 
@@ -38,7 +38,7 @@ def admin_choice(session):
         print(create_user_application_table(validated_user))
         main_menu(session, validated_user)
     else:
-        c.print('--Invalid response--', style="error")
+        c.print('Error: Please select a letter from A to G', style="error")
 
 def show_job_table(session):
     job_table = PrettyTable()
@@ -75,6 +75,7 @@ def add_job_to_db(session):
         remote=valid_remote)
     session.add(new_job)
     session.commit()
+
     c.print('Job has been added to the database', style="success")
     # ADD A PRINTING TABLE OF THE NEWLY ADDED JOB INFORMATION #
 
@@ -104,10 +105,11 @@ def edit_job_in_db(session):
         job.remote = valid_remote
 
         session.commit()
+
         c.print("Row updated successfully.", style="success")
         # ADD A PRINTING TABLE OF THE NEWLY EDITED JOB INFORMATION #
     else:
-        c.print("Row not found.", style="error")
+        c.print("Job ID not found.", style="error")
 
 def validate_salary(value, session):
     try:
@@ -127,7 +129,7 @@ def validate_remote(value, session):
     elif value == "False":
         value = False
     else:
-        c.print("Remote must be 'True' or 'False'", style="error")
+        c.print("Remote must be [red][bold]'True' or 'False'[/bold][/red]", style="error")
         run_admin(session)
     return value
 
@@ -138,7 +140,7 @@ def delete_job_from_db(session):
     if job:
         session.delete(job)
         session.commit()
-        c.print("Job removed successfully.", style="success")
+        c.print("Job removed successfully!", style="success")
     else:
         c.print("Item not found.", style="error")
 
@@ -157,11 +159,10 @@ def show_users_table(session):
 def delete_user_from_db(session):
     c.print("Enter the ID of the user you want to remove:", style="prompt")
     user_id = input()
-
     user = session.query(User).get(user_id)
     if user:
         session.delete(user)
         session.commit()
-        c.print("User removed successfully.", style="success")
+        c.print("User removed successfully!", style="success")
     else:
         c.print("Item not found.", style="error")

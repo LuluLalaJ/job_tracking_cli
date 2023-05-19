@@ -48,7 +48,7 @@ def main_menu(session, validated_user):
     while True:
         c.print('You can:', style="menu")
         menu = f'A. add a new job application \n' \
-            + f'B. sort my applications \n' \
+            + f'B. view/sort my applications \n' \
             + f'C. update an existing job application status \n' \
             + f'D. delete an existing job application \n' \
             + f'E. exit the program'

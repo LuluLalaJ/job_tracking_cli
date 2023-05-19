@@ -1,7 +1,6 @@
 from db.models import Application
 from rich import print
 from helpers import c
-from rich import print
 
 APPLICATION_STATUS = [
     "to be submitted",
@@ -16,7 +15,8 @@ APPLICATION_STATUS = [
 def update_application_status(session, app_id):
     while True:
         print_app_status_menu()
-        new_status = input('Select the new status: \n')
+        c.print('Select the new status:', style="prompt")
+        new_status = input()
         try:
             new_status = int(new_status)
             if new_status == len(APPLICATION_STATUS) + 1:
@@ -32,12 +32,12 @@ def update_application_status(session, app_id):
                 c.print('The application status is updated!', style="success")
                 break
             else:
-                c.print('Invalid input. Please enter an interger between 1 and 8.', style="error")
+                c.print('Invalid input. Please enter an interger between 1 and 9.', style="error")
         except ValueError:
             c.print('Invalid input. Please enter an integer value.', style="error")
 
 def print_app_status_menu():
-    print('Valid status options:')
+    c.print('Valid status options:', style="prompt")
     i = 1
     for status in APPLICATION_STATUS:
         c.print(f'{i}. {status.title()}', style="menu")

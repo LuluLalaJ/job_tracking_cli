@@ -3,7 +3,7 @@ from rich import print
 
 def handle_application_sorting(user, session):
     while True:
-        c.print('How would you like to sort your applications?', style="prompt")
+        c.print('How would you like to view your applications?', style="prompt")
         menu = f'A. by job title \n' \
             + f'B. by company \n' \
             + f'C. by location \n' \

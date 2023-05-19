@@ -12,7 +12,7 @@ from rich.padding import Padding
 
 
 if __name__ == '__main__':
-    engine = create_engine("sqlite:///db/jobtracking.db")
+    engine = create_engine("sqlite:///lib/db/jobtracking.db")
     Session = sessionmaker()
     Session.configure(bind=engine)
     session = Session()

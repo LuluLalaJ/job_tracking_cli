@@ -24,7 +24,7 @@ def clear_data():
 
 def create_users():
     users = []
-    for _ in range(5):
+    for _ in range(10):
         user = User(
             first_name=fake.first_name(),
             last_name=fake.last_name()
@@ -37,7 +37,7 @@ def create_users():
 
 def create_jobs():
     jobs = []
-    for _ in range(10):
+    for _ in range(30):
         job = Job(
             job_title=fake.job(),
             company=fake.company(),
@@ -63,7 +63,7 @@ APPLICATION_STATUS = [
 
 def create_applications():
     applications = []
-    for _ in range(50):
+    for _ in range(100):
         application = Application(
             status = random.choice(APPLICATION_STATUS),
             active = random.choice([True, False])
@@ -89,4 +89,3 @@ if __name__ == "__main__":
     users = create_users()
     applications = create_applications()
     jobs, users, applications = relate_one_to_many(jobs, users, applications)
-    

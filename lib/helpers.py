@@ -119,6 +119,8 @@ def process_choice(session, choice, user):
 
     if choice == "c":
         app_id = check_app_id(user)
+        if app_id == 0:
+            return 
         update_application_status(session, app_id)
         print(create_user_application_table(user))
 
@@ -128,12 +130,12 @@ def process_choice(session, choice, user):
 
 def check_app_id(user):
     while True:
-            c.print('Enter your app id:', style="prompt")
+            c.print('Enter your app id or press "0" to return to the previous menu:', style="prompt")
             app_id = input()
             try:
                 app_id = int(app_id)
                 app_id_exists = app_id in user_active_app_id(user)
-                if app_id_exists:
+                if app_id_exists or app_id == 0:
                     return app_id
                 else:
                     c.print('App ID does not exist in DB. pleaset try gain!', style="error")

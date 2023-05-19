@@ -1,6 +1,5 @@
 from db.models import Job, Application
 from prettytable import PrettyTable
-from sqlalchemy import func
 from helpers import create_user_application_table, c
 from rich import print
 
@@ -86,7 +85,7 @@ def get_jobs_by_options(session, viewing_option):
 
 def check_job_id(user, jobs):
     while True:
-        c.print("Enter your job id or 'Q' to return to the previous menu:", style="prompt")
+        c.print("Enter your job id or [red]'Q'[/red] to return to the previous menu:", style="prompt")
         job_id = input().lower()
         if job_id == "q":
             return

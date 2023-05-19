@@ -1,4 +1,3 @@
-from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, MetaData, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -10,7 +9,6 @@ convention = {
 }
 metadata = MetaData(naming_convention=convention)
 Base = declarative_base(metadata=metadata)
-# engine = create_engine('sqlite:///jobtracking.db')
 
 class Job(Base):
     __tablename__ = "jobs"

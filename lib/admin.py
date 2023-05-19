@@ -1,4 +1,4 @@
-from db.models import Job, User, Application
+from db.models import Job, User
 from prettytable import PrettyTable
 from helpers import validate_user, main_menu, create_user_application_table, c
 

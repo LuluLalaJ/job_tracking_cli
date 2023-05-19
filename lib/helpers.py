@@ -1,8 +1,6 @@
-from db.models import Job, User, Application
+from db.models import User
 from prettytable import PrettyTable
-from sqlalchemy import func
-from rich import print, box
-from rich.table import Table
+from rich import print
 from rich.console import Console
 from rich.theme import Theme
 

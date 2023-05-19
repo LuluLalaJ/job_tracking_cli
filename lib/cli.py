@@ -17,7 +17,7 @@ if __name__ == '__main__':
     Session.configure(bind=engine)
     session = Session()
 
-    welcome = Padding("===== WELCOME TO THE APPLICATION TRACKING CENTER ====", (2), style="dark_sea_green1")
+    welcome = Padding("===== WELCOME TO THE APPLICATION TRACKING CENTER ====", (4), style="dark_sea_green1")
     print(welcome)
 
     validated_user = validate_user(session)

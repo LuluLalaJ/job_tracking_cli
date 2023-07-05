@@ -28,6 +28,6 @@ The admin manages the databases so the admin not only can view all the available
 
 ### Contributing
 
-Bug reports and pull requests are welcome on GitHub at http:// ...
+Bug reports and pull requests are welcome on GitHub at https://github.com/LuluLalaJ/job_tracking_cli
 
 ***
